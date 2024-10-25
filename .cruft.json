@@ -1,0 +1,30 @@
+{
+  "template": "https://github.com/statisticsnorway/ssb-pypitemplate.git",
+  "commit": "e6f0ca2794354d16838cf36d97bee2f9f70d3142",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "project_name": "ssb-tbmd-apis-python",
+      "package_name": "ssb_tbmd_apis_python",
+      "friendly_name": "SSB Tbmd Apis Python",
+      "copyright_owner": "Statistics Norway",
+      "copyright_year": "2024",
+      "author": "Carl F. Corneil",
+      "email": "cfc@ssb.no",
+      "github_organization": "statisticsnorway",
+      "version": "0.0.0",
+      "license": "MIT",
+      "development_status": "Development Status :: 1 - Planning",
+      "code_quality_level": "Medium",
+      "_copy_without_render": [
+        "*.rst_t"
+      ],
+      "_jinja2_env_vars": {
+        "lstrip_blocks": true,
+        "trim_blocks": true
+      },
+      "_template": "https://github.com/statisticsnorway/ssb-pypitemplate.git"
+    }
+  },
+  "directory": null
+}
