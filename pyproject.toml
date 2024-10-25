@@ -15,10 +15,13 @@ Changelog = "https://github.com/statisticsnorway/ssb-tbmd-apis-python/releases"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-click = ">=8.0.1"
+ipykernel = "^6.29.5"
+zeep = "^4.3.1"
+lxml = "^5.3.0"
+pandas = "^2.2.3"
 
 [tool.poetry.group.dev.dependencies]
-pygments = ">=2.10.0"
+pygments = "=2.17.2"  # Change after prodsone stabilzes 
 black = { extras = ["jupyter"], version = ">=23.1.0" }
 coverage = { extras = ["toml"], version = ">=6.2" }
 darglint = ">=1.8.1"
@@ -35,6 +38,16 @@ sphinx-click = ">=3.0.2"
 typeguard = ">=2.13.3"
 xdoctest = { extras = ["colors"], version = ">=0.15.10" }
 myst-parser = { version = ">=0.16.1" }
+
+
+
+
+
+
+[[tool.poetry.source]]
+name = "nexus"
+url = "http://pl-nexuspro-p.ssb.no:8081/repository/pypi-proxy/simple"
+priority = "primary"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
