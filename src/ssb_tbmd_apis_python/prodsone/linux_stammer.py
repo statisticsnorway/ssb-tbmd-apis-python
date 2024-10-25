@@ -1,6 +1,6 @@
 import os
 
-def linux_shortcuts(insert_environ: bool = False) -> dict[str, str]:
+def linux_stammer(insert_environ: bool = False) -> dict[str, str]:
     """Manually load the "linux-forkortelser" in as dict.
 
     If the function can find the file they are shared in.

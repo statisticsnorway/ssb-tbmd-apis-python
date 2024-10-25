@@ -6,12 +6,17 @@ from ssb_tbmd_apis_python.operations.operations_datadok import datadok_vars_data
 import pandas as pd
 
 
-def datadok_open_flatfile_from_path(path: str, **read_fwf_params: Any) -> pd.DataFrame:
+def datadok_open_flatfile_from_path(path: str, ddok_path: str | None = None, **read_fwf_params: Any) -> pd.DataFrame:
     if "encoding" not in read_fwf_params:
         read_fwf_params["encoding"] = "latin1"
-    var_df = datadok_vars_dataframe_by_path(path)
+        
+    if ddok_path is not None:
+        var_df = datadok_vars_dataframe_by_path(ddok_path)
+    else:
+        var_df = datadok_vars_dataframe_by_path(path)
+        
     dtypes = dtypes_datadok_to_pandas(var_df)
-    return pd.read_fwf(look_for_file(path),
+    return pd.read_fwf(_look_for_file(path),
                        dtypes=dtypes,
                        widths=var_df.T["Length"].to_list(),
                        names=dtypes.keys(),
@@ -19,7 +24,7 @@ def datadok_open_flatfile_from_path(path: str, **read_fwf_params: Any) -> pd.Dat
                        **read_fwf_params,
                       )
 
-def look_for_file(path: str) -> str:
+def _look_for_file(path: str) -> str:
     # Attempt one, look for specific file
     if os.path.isfile(path):
         return path
