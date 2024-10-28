@@ -21,7 +21,7 @@ with ZeepClientManager(wsdl="http://ws.ssb.no/VardokService/VardokService.asmx?W
     print(getattr(client.service, "GetConceptVariablesByNameDef")("nus2000"))
 
 # %%
-from ssb_tbmd_apis_python import datadok_file_description_by_path, datadok_vars_dataframe_by_path, dtypes_datadok_to_pandas
+from ssb_tbmd_apis import datadok_file_description_by_path, datadok_vars_dataframe_by_path, dtypes_datadok_to_pandas
 
 # %%
 from ssb_tbmd_apis_python import get_zeep_client
@@ -30,7 +30,17 @@ from ssb_tbmd_apis_python import get_zeep_client
 path = "$UTD/gjfor_vgo/arkiv/5s6y/g2017g2023"
 
 # %%
-gjfor_ddok = datadok_file_description_by_path(path)
+from ssb_tbmd_apis.operations.operations_datadok import datadok_file_description_by_path
+gjfor_ddok = datadok_file_description_by_path("$UTD/nudb/arkiv/avslutta/g2019g2020/")
+
+# %%
+gjfor_ddok.keys()
+
+# %%
+gjfor_ddok["ContextVariable"]
+
+# %%
+gjfor_ddok["ContextVariable"]
 
 # %%
 df = datadok_vars_dataframe_by_path(path)
@@ -45,7 +55,7 @@ datadok_context_variable_by_reference("$UTD/nudb/arkiv/avslutta/g2019g2020/spesu
 datadok_codelist_by_reference("$KULTMED/kulturbruk/arkiv/bruttoutvalg/g2021/Kino3a")
 
 # %% jupyter={"outputs_hidden": true}
-from ssb_tbmd_apis_python.operations.operations_vardok import vardok_concept_variables_by_owner
+from ssb_tbmd_apis.operations.operations_vardok import vardok_concept_variables_by_owner
 our_vars = vardok_concept_variables_by_owner(360)
 our_vars
 

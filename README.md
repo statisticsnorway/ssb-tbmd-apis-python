@@ -28,7 +28,6 @@
 ## Features
 
 ### TODO
-1. Convert from .dat file on disk to parquet on disk
 1. Store metadata (\_\_MIGRERDOK.json) from old datadok to a temp json file on disk
 1. Allow to convert .dat using the MIGRERDOK-file, test in cloud
 1. Save codelists from datadok to klass-xml
