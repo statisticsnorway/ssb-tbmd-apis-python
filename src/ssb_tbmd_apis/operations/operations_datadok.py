@@ -1,8 +1,11 @@
 """Operations supported by the Datadok TBMD API."""
-
+import os
 from typing import Any
 from collections import OrderedDict
-from ssb_tbmd_apis_python.zeep_client import get_zeep_serialize
+from ssb_tbmd_apis.zeep_client import get_zeep_serialize
+from ssb_tbmd_apis.paths.try_variations import try_zeep_serialize_path
+
+import zeep
 
 def datadok_codelist_by_id(codelist_id: int | str) -> OrderedDict[str, Any]:
     """Rutinen skal returnere én kodeliste med alle attributter basert på gitt Id eller urn. 
@@ -94,7 +97,16 @@ def datadok_file_description_by_path(file_path: str) -> OrderedDict[str, Any]:
     Returns:
         OrderedDict: The serialized zeep OrderedDict.
     """
-    return get_zeep_serialize("datadok", "GetFileDescriptionByPath", file_path)
+    
+    return try_zeep_serialize_path(file_path,
+                                   tbmd_service="datadok",
+                                   operation="GetFileDescriptionByPath", )
+    
+
+    
+    
+    
+    
 
 
 

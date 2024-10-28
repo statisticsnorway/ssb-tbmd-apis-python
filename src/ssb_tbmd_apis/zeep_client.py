@@ -53,8 +53,10 @@ def get_zeep_client(tbmd_service: str = "datadok") -> ZeepClientManager:
 
 
 def get_zeep_serialize(tbmd_service: str = "datadok",
-                       service: str = "GetFileDescriptionByPath",
+                       operation: str = "GetFileDescriptionByPath",
                        *args) -> OrderedDict[str, Any]:
     with get_zeep_client(tbmd_service) as client:
-        response = getattr(client.service, service)(*args)
+        response = getattr(client.service, operation)(*args)
     return zeep.helpers.serialize_object(response)
+
+

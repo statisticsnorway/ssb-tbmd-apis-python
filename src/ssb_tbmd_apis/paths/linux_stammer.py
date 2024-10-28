@@ -1,6 +1,6 @@
 import os
 
-def linux_stammer(insert_environ: bool = False) -> dict[str, str]:
+def linux_stammer(insert_environ: bool = False, flip: bool = False) -> dict[str, str]:
     """Manually load the "linux-forkortelser" in as dict.
 
     If the function can find the file they are shared in.
@@ -28,4 +28,6 @@ def linux_stammer(insert_environ: bool = False) -> dict[str, str]:
                 stm[first] = second
                 if insert_environ:
                     os.environ[first] = second
+    if flip:
+        return {v: k for k, v in stm.items()}
     return stm

@@ -2,7 +2,7 @@
 
 from typing import Any
 from collections import OrderedDict
-from ssb_tbmd_apis_python.zeep_client import get_zeep_serialize
+from ssb_tbmd_apis.zeep_client import get_zeep_serialize
 
 
 def statbank_meta_by_table_id(table_id: str | int) -> OrderedDict[str, Any]:

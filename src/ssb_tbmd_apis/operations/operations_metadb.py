@@ -3,7 +3,7 @@
 
 from typing import Any
 from collections import OrderedDict
-from ssb_tbmd_apis_python.zeep_client import get_zeep_serialize
+from ssb_tbmd_apis.zeep_client import get_zeep_serialize
 
 
 def metadb_codelist_by_id(codelist_id: int | str) -> OrderedDict[str, Any]:
