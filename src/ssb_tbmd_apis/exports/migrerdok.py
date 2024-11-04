@@ -1,48 +1,60 @@
-import os
+import os, json
+from pathlib import Path
 import pandas as pd
 from dapla_metadata.datasets import Datadoc
+from dapla_metadata.datasets.statistic_subject_mapping import StatisticSubjectMapping
+from ssb_tbmd_apis.tbmd_logger import logger
+from ssb_tbmd_apis.imports.datadok_open_flatfile import datadok_open_flatfile_from_path
+from ssb_tbmd_apis.operations.operations_datadok import datadok_file_description_by_path
+from ssb_tbmd_apis.paths.try_variations import swap_dollar_sign
 
-def convert_dat_populate_new_datadoc(flatfile: str,
-                                     output_parquet: str,
-                                     overwrite: bool = False) -> tuple[pd.DataFrame, Datadoc]:
-    # Open data
-    df = datadok_open_flatfile_from_path(flatfile)
+from collections import OrderedDict
+from typing import Any
+
+
+def save_migrerdok_for_flatfile(flatfile: str | Path,
+                                overwrite: bool = False) -> Path:   
+    ddok_contents, ddok_save_path = datadok_file_description_by_path(flatfile)
     
     # Get old meta from old datadok
-    meta_old = datadok_file_description_by_path(flatfile)
-    
-    # Write data
-    if os.path.isfile(output_parquet) and not overwrite:
-        raise IOError(f"File already exists: {output_parquet}")
-    df.to_parquet(output_parquet)
-    
-    # Make new datadoc, metadata
-    meta = Datadoc(dataset_path = output_parquet)
-    return meta
+    ddok_path = ddok_save_path.parent / (ddok_save_path.stem + "__MIGRERDOK.json")
+    ddok_path = swap_dollar_sign(ddok_path)
+    if not ddok_path.is_file() or overwrite:
+        with open(ddok_path, "w") as ddok_file:
+            json.dump(ddok_contents, ddok_file)
+        logger.info(f"Wrote datadok contents to {ddok_path}")
+    else:
+        raise OSError(f"Not overwriting existing file {ddok_path}")  
+    return ddok_path
 
-    # Populate new datadoc model with stuff from old datadoc
-    meta, codelists = migrate_meta_datadok_oldnew(meta_old, meta)
-    
-    # Save codelists to klass-xmls
-    for var_name, code in codelists.items():
-        codemeta = code["CodelistMeta"]
-        codes = code["Codes"]
-        
-        # Add varname to outpath
-        
-        # Save klass-xml of the codelist
-        
-        # Where to save the metadata about the codelist?
-        # "Vardok" .json?
-    
-    # Save changes to meta
-    meta.write_metadata_document()
-    
-    return df, meta
+def get_colnames_from_migrerdok(migrerdok: str | Path) -> list[str]:
+    path = swap_dollar_sign(migrerdok)
+    with open(path, "r") as migrerout:
+        contents = json.load(migrerout)
+    colnames = [x["Title"]["_value_1"] for x in contents["ContextVariable"]]
+    return colnames
 
+        
+def convert_dat_save_migrerdok(flatfile: str,
+                                output_parquet: str,
+                                overwrite: bool = False) -> tuple[pd.DataFrame, Datadoc]:
+    raise NotImplementedError()
+    
+    df = datadok_open_flatfile_from_path(flatfile)
+    
+    
+    meta_old = save_migrerdata_for_flatfile(flatfile, overwrite)
+    
+    meta_doc = Datadoc(output_parquet,
+        statistic_subject_mapping=StatisticSubjectMapping(source_url=None)
+           )
+    meta_doc = migrate_meta_datadok_oldnew(meta_old, meta_doc)
+    
+    return df, meta_doc
 
-def migrate_meta_datadok_oldnew(meta_old: OrderedDict[str, Any],
-                                meta: Datadoc) -> Datadoc:
+def migrate_meta_datadok_oldnew(meta_old: str | Path,
+                                meta: str | Path) -> Datadoc:
+    raise NotImplementedError()
     
     # Title
     title = meta_old["Title"]["_value_1"]

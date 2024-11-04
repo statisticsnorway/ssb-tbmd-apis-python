@@ -1,4 +1,5 @@
-import os, glob
+import os, glob, datetime
+from pathlib import Path
 from collections import OrderedDict
 from typing import Any
 import zeep
@@ -7,11 +8,12 @@ from ssb_tbmd_apis.paths.linux_stammer import linux_stammer
 from ssb_tbmd_apis.tbmd_logger import logger
 
 KNOWN_EXTENSIONS = ["", ".dat", ".txt"]
+TIME_TRAVEL = 20
 
 def try_zeep_serialize_path(path: str,
                             tbmd_service: str = "datadok",
                             operation: str = "GetFileDescriptionByPath",
-                           ) -> OrderedDict[str, Any]:
+                           ) -> tuple[OrderedDict[str, Any], Path]:
     # Remove extension
     file_path = path.split(".")[0]
     # Swap for $-path
@@ -28,26 +30,45 @@ def try_zeep_serialize_path(path: str,
     file_path = os.sep.join([file_path.split(os.sep)[0].replace("_PII", ""), *file_path.split(os.sep)[1:]])
     
     # Try without PII
-    try:
-        return get_zeep_serialize("datadok", "GetFileDescriptionByPath", file_path)
-    except zeep.exceptions.Fault as e:
-        logger.info(f"Couldnt find datadok entry at {file_path}. Looking in PII.")
+    variations = period_variations_path(file_path)
+    for variation in variations:
+        try:
+            return get_zeep_serialize("datadok", "GetFileDescriptionByPath", variation), variation
+        except zeep.exceptions.Fault as e:
+            logger.debug(f"Couldnt find datadok entry at {variation}.")
     
     # Try with "PII"
     file_path = file_path.split(os.sep)[0] + "_PII/" + os.sep.join(file_path.split(os.sep)[1:])
-    return get_zeep_serialize("datadok", "GetFileDescriptionByPath", file_path)
+    variations = period_variations_path(file_path)
+    for variation in variations:
+        try:
+            return get_zeep_serialize("datadok", "GetFileDescriptionByPath", variation), variation
+        except zeep.exceptions.Fault as e:
+            logger.debug(f"Couldnt find datadok entry at {variation}.")
+    
+    raise FileNotFoundError(f"Failed looking for path in datadok-api: {path}")
 
 
-
-def look_for_file_on_disk(path: str) -> str:
-    # Swap dollar sign
-    first_part = path.split(os.sep)[0]
+def swap_dollar_sign(path: str | Path) -> Path:
+    if isinstance(path, str):
+        outpath = Path(path)
+    elif isinstance(path, Path):
+        outpath = path
+    else:
+        raise TypeError("Path in is not a str or pathlib.Path.")
+    
+    first_part = outpath.parts[0]
     if first_part.startswith("$"):
         first_part = first_part[1:]
     replace = linux_stammer().get(first_part, None)
     if replace is not None:
-        path = os.sep.join([replace, *path.split(os.sep)[1:]])
-        logger.info(f"When looking for file on disk, replaced {first_part} with {replace}: {path}")
+        outpath = Path(replace) / Path(*outpath.parts[1:])
+    return outpath
+
+
+def look_for_file_on_disk(path: str) -> str:
+    # Swap dollar sign
+    path = swap_dollar_sign(path)
     
     # Attempt one, look for specific file
     if os.path.isfile(path):
@@ -84,3 +105,40 @@ def look_for_file_on_disk(path: str) -> str:
         f"Too many files discovered (more than one): {glob_result}"
                     
     raise FileNotFoundError("Cant find single file with that path on local drive.")
+    
+
+def period_variations_path(path: str) -> list[str]:
+    
+    # Find periods in path
+    periods = []
+    temp_name = Path(path).stem
+    while temp_name and temp_name[0] == "g" and temp_name[1:5].isdigit():
+        periods += [int(temp_name[1:5])]
+        temp_name = temp_name[5:]
+    
+    current_year = datetime.datetime.now().year
+    
+    variations = []
+    # Build guesses for paths with single yead
+    if len(periods) == 1:       
+        # Check back 20 years
+        for first_yr in range(periods[0], periods[0] - TIME_TRAVEL, -1):
+            variations += [Path(path).parent / f"g{first_yr}"]
+            for second_yr in range(current_year, first_yr, -1):
+                variations += [Path(path).parent / f"g{first_yr}g{second_yr}"]
+    
+    # Build guesses for paths with 2 years
+    elif len(periods) == 2:
+        diff = periods[1] - periods[0]
+        
+        for first_yr in range(periods[0], periods[0] - TIME_TRAVEL, -1):
+            variations += [Path(path).parent / f"g{first_yr}g{first_yr+diff}"]
+            for second_yr in range(current_year, first_yr, -1):
+                variations += [Path(path).parent / f"g{first_yr}g{second_yr}"]
+                variations += [Path(path).parent / f"g{first_yr}g{first_yr+diff}g{second_yr}g{second_yr+diff}"]
+    
+    
+    else:
+        raise NotImplementedError(f"Dont know what to do with {len(periods)} periods in path.")
+    
+    return variations

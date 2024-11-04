@@ -1,6 +1,7 @@
 """Operations supported by the Datadok TBMD API."""
 import os
 from typing import Any
+from pathlib import Path
 from collections import OrderedDict
 from ssb_tbmd_apis.zeep_client import get_zeep_serialize
 from ssb_tbmd_apis.paths.try_variations import try_zeep_serialize_path
@@ -86,7 +87,7 @@ def datadok_file_description_by_id(file_id: int | str) -> OrderedDict[str, Any]:
     """
     return get_zeep_serialize("datadok", "GetFileDescriptionById", file_id)
 
-def datadok_file_description_by_path(file_path: str) -> OrderedDict[str, Any]:
+def datadok_file_description_by_path(file_path: str) -> tuple[OrderedDict[str, Any], Path]:
     """Rutinen skal returnere én filbeskrivelse basert på gitt Datadok sti. 
     
     F.eks. $FOB/person/arkiv/personfil/g2001.

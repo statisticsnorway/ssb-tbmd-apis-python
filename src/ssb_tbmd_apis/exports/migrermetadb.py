@@ -1,0 +1,45 @@
+import os
+import json
+from collections import OrderedDict
+from typing import Any
+import zeep
+from pathlib import Path
+from ssb_tbmd_apis.tbmd_logger import logger
+from ssb_tbmd_apis.operations.operations_metadb import metadb_codelists
+from ssb_tbmd_apis.operations.operations_metadb import metadb_codelist_by_id
+from ssb_tbmd_apis.paths.try_variations import swap_dollar_sign
+
+
+def get_metadb_vars(varnames: list[str]) -> dict[str, OrderedDict[str, Any]]:
+    metadb = {x["CodelistMeta"]["Title"]["_value_1"]: x["id"] for x in metadb_codelists()}
+    codelist_codes = {}
+    for var in varnames:
+        for meta_col, meta_id in metadb.items():
+            if meta_col.lower().endswith(var.lower()):
+                logger.info(f"Found: {var} at end of {meta_col} with id {meta_id}")
+                try:
+                    codelist_codes[meta_col] = metadb_codelist_by_id(meta_id)
+                except zeep.exceptions.Fault as e:
+                    logger.warning(f"Couldnt get {meta_col} - {meta_id} from the API: {e}")
+                break
+    return codelist_codes
+
+
+def save_metadb_vars(varnames: list[str],
+                     outpath: str | Path,
+                     overwrite: bool = False) -> dict[str, OrderedDict[str, Any]]:
+    outpath = swap_dollar_sign(outpath)
+    logger.info(f"After swapping dollar {outpath}")
+    suffix = "__MIGRERMETADB.json"
+    if not outpath.name.endswith(suffix):
+        outpath = outpath.parent / (outpath.stem + suffix)
+    
+    codelists = get_metadb_vars(varnames)
+    if not outpath.is_file() or overwrite:
+        with open(outpath, "w") as metadbfile:
+            json.dump(codelists, metadbfile, default=str)
+        logger.info(f"Wrote migrer metadb file to: {outpath}")
+    else:
+        raise OSError(f"File already exists, set overwrite to True if you want to overwrite: {outpath}.")
+    return codelists
+            
