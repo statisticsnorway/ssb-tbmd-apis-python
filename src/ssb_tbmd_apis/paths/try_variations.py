@@ -33,18 +33,18 @@ def try_zeep_serialize_path(path: str,
     variations = period_variations_path(file_path)
     for variation in variations:
         try:
-            return get_zeep_serialize("datadok", "GetFileDescriptionByPath", variation), variation
+            return get_zeep_serialize("datadok", "GetFileDescriptionByPath", variation), Path(variation)
         except zeep.exceptions.Fault as e:
-            logger.debug(f"Couldnt find datadok entry at {variation}.")
+            logger.info(f"Couldnt find datadok entry at {variation}.: {e}")
     
     # Try with "PII"
     file_path = file_path.split(os.sep)[0] + "_PII/" + os.sep.join(file_path.split(os.sep)[1:])
     variations = period_variations_path(file_path)
     for variation in variations:
         try:
-            return get_zeep_serialize("datadok", "GetFileDescriptionByPath", variation), variation
+            return get_zeep_serialize("datadok", "GetFileDescriptionByPath", variation), Path(variation)
         except zeep.exceptions.Fault as e:
-            logger.debug(f"Couldnt find datadok entry at {variation}.")
+            logger.info(f"Couldnt find datadok entry at {variation}: {e}")
     
     raise FileNotFoundError(f"Failed looking for path in datadok-api: {path}")
 
@@ -123,22 +123,23 @@ def period_variations_path(path: str) -> list[str]:
     if len(periods) == 1:       
         # Check back 20 years
         for first_yr in range(periods[0], periods[0] - TIME_TRAVEL, -1):
-            variations += [Path(path).parent / f"g{first_yr}"]
+            variations += [Path(path).parent / f"g{first_yr}{temp_name}"]
             for second_yr in range(current_year, first_yr, -1):
-                variations += [Path(path).parent / f"g{first_yr}g{second_yr}"]
+                variations += [Path(path).parent / f"g{first_yr}g{second_yr}{temp_name}"]
     
     # Build guesses for paths with 2 years
     elif len(periods) == 2:
         diff = periods[1] - periods[0]
         
         for first_yr in range(periods[0], periods[0] - TIME_TRAVEL, -1):
-            variations += [Path(path).parent / f"g{first_yr}g{first_yr+diff}"]
+            variations += [Path(path).parent / f"g{first_yr}g{first_yr+diff}{temp_name}"]
             for second_yr in range(current_year, first_yr, -1):
-                variations += [Path(path).parent / f"g{first_yr}g{second_yr}"]
-                variations += [Path(path).parent / f"g{first_yr}g{first_yr+diff}g{second_yr}g{second_yr+diff}"]
+                variations += [Path(path).parent / f"g{first_yr}g{second_yr}{temp_name}"]
+                variations += [Path(path).parent / f"g{first_yr}g{first_yr+diff}g{second_yr}g{second_yr+diff}{temp_name}"]
     
     
     else:
-        raise NotImplementedError(f"Dont know what to do with {len(periods)} periods in path.")
+        variations += [path]
+        logger.warning(f"Dont know what to do with {len(periods)} periods in path. Not guessing much... Variations: {variations}")
     
     return variations

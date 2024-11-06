@@ -28,7 +28,7 @@ migrer_path = save_migrerdok_for_flatfile("$UTD_PII/nudb/arkiv/vg_vitnemal/g2001
 import glob
 paths = (glob.glob("/ssb/stamme01/utd_pii/nudb/arkiv/**/**/*.dat", recursive=True) +
          glob.glob("/ssb/stamme01/utd_pii/nudb/arkiv/**/**/*.txt", recursive=True))
-for path in paths[:50]:
+for path in paths:
     try:
         save_migrerdok_for_flatfile(path, overwrite=True)
     except:

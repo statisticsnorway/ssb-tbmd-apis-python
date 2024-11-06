@@ -20,8 +20,9 @@ def save_migrerdok_for_flatfile(flatfile: str | Path,
     ddok_path = ddok_save_path.parent / (ddok_save_path.stem + "__MIGRERDOK.json")
     ddok_path = swap_dollar_sign(ddok_path)
     if not ddok_path.is_file() or overwrite:
+        ddok_path.parent.mkdir(parents=True, exist_ok=True)
         with open(ddok_path, "w") as ddok_file:
-            json.dump(ddok_contents, ddok_file)
+            json.dump(ddok_contents, ddok_file, default=str)
         logger.info(f"Wrote datadok contents to {ddok_path}")
     else:
         raise OSError(f"Not overwriting existing file {ddok_path}")  
