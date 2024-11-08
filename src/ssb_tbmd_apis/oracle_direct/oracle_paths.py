@@ -20,6 +20,7 @@ def paths_in_substamme(stamme_substamme: list[tuple[str, str]] | tuple[str, str]
         list[str]: The paths constructed from the contents in the database.
     
     Raises:
+        TypeError: If the stamme_substamme parameter does not result in a list of tuples containing two strings.
         error: If the fetching from database doesnt work out.
     
     """
@@ -28,6 +29,14 @@ def paths_in_substamme(stamme_substamme: list[tuple[str, str]] | tuple[str, str]
         stamme_substamme = tuple(stamme_substamme.split("/"))
     if isinstance(stamme_substamme, tuple):
         stamme_substamme = [stamme_substamme]
+    
+    # Typecheck
+    if not isinstance(stamme_substamme_pairs, list):
+        raise TypeError("stamme_substamme_pairs must be a list.")
+    if not all([isinstance(x, tuple) for x in stamme_substamme_pairs]):
+        raise TypeError("Elements of stamme_substamme_pairs must be tuples.")
+    if not all(isinstance(y, str) for x in stamme_substamme_pairs for y in x):
+        raise TypeError("All element of the tuples in the list stamme_substamme_pairs must be strings.")
     
     
     union_queries = []
