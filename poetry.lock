@@ -591,6 +591,22 @@ url = "https://pypi.org/simple"
 reference = "nexus"
 
 [[package]]
+name = "chardet"
+version = "5.2.0"
+description = "Universal encoding detector for Python 3"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "chardet-5.2.0-py3-none-any.whl", hash = "sha256:e1cf59446890a00105fe7b7912492ea04b6e6f06d4b742b2c788469e34c82970"},
+    {file = "chardet-5.2.0.tar.gz", hash = "sha256:1b3b6ff479a8c414bc3fa2c0852995695c4a026dcd6d0633b2dd092ca39c1cf7"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/simple"
+reference = "nexus"
+
+[[package]]
 name = "charset-normalizer"
 version = "3.4.0"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
@@ -3830,6 +3846,25 @@ url = "https://pypi.org/simple"
 reference = "nexus"
 
 [[package]]
+name = "pyarrow-stubs"
+version = "17.11"
+description = "Type annotations for pyarrow"
+optional = false
+python-versions = "<4,>=3.8"
+files = [
+    {file = "pyarrow_stubs-17.11-py3-none-any.whl", hash = "sha256:71255538eaa2d5fc85626a520c642285206acb43eccade36e724a4c1c5153299"},
+    {file = "pyarrow_stubs-17.11.tar.gz", hash = "sha256:d0a7b3f661ebddf53291df959648c84d109055aa48b245686f1f1878c249a2b8"},
+]
+
+[package.dependencies]
+pyarrow = ">=17"
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/simple"
+reference = "nexus"
+
+[[package]]
 name = "pyasn1"
 version = "0.6.1"
 description = "Pure-Python implementation of ASN.1 types and DER/BER/CER codecs (X.208)"
@@ -4897,6 +4932,28 @@ url = "https://pypi.org/simple"
 reference = "nexus"
 
 [[package]]
+name = "saspy"
+version = "5.101.0"
+description = "A Python interface to SAS"
+optional = false
+python-versions = "*"
+files = [
+    {file = "saspy-5.101.0-py3-none-any.whl", hash = "sha256:d2b05e1faeba16654d10213a75ac92b40efebfc75ad0c25157c3d84c8232afc3"},
+    {file = "saspy-5.101.0.tar.gz", hash = "sha256:56b9a7d387ab5790dba87a22e5d2c60a9d988cf53d1a585d7de0092f7a6ea7c5"},
+]
+
+[package.extras]
+colorlog = ["pygments"]
+iomcom = ["pypiwin32"]
+pandas = ["pandas"]
+parquet = ["pyarrow"]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/simple"
+reference = "nexus"
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -5338,6 +5395,46 @@ url = "https://pypi.org/simple"
 reference = "nexus"
 
 [[package]]
+name = "ssb-fagfunksjoner"
+version = "1.0.6"
+description = "Fellesfunksjoner for ssb i Python"
+optional = false
+python-versions = ">=3.10,<4.0"
+files = [
+    {file = "ssb_fagfunksjoner-1.0.6-py3-none-any.whl", hash = "sha256:f39442b6daaa39222633284a1f5679a7a09c8bc0274c105ee5e5979caca403b6"},
+    {file = "ssb_fagfunksjoner-1.0.6.tar.gz", hash = "sha256:7c7f430971257b4348155d2b6c9807d3f8cbad6e95d2463832883b8a305672d6"},
+]
+
+[package.dependencies]
+beautifulsoup4 = ">=4.12.2"
+chardet = ">=5.2.0"
+colorama = ">=0.4.6"
+dapla-toolbelt = ">=3.0.2"
+ipykernel = ">=6.15.3"
+ipywidgets = ">=8.1.1"
+openpyxl = ">=3.1.5"
+oracledb = ">=2.3.0"
+pandas = ">=2.0.0"
+pandas-stubs = ">=2.0.0.230412"
+pyarrow = ">=14.0.1"
+pyarrow-stubs = ">=10.0.1.9"
+python-dotenv = ">=1.0.0"
+requests = ">=2.31.0"
+saspy = ">=5.2.1"
+SQLAlchemy = ">=1.3.19"
+toml = ">=0.10.2"
+types-beautifulsoup4 = ">=4.12.0.20240511"
+types-colorama = ">=0.4.15.20240205"
+types-openpyxl = ">=3.1.5.20240719"
+types-requests = ">=2.31.0.10"
+types-toml = ">=0.10.8.7"
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/simple"
+reference = "nexus"
+
+[[package]]
 name = "ssb-klass-python"
 version = "0.0.11"
 description = "A Python package built on top of KLASS's API for retrieving classifications, codes, correspondences etc."
@@ -5521,6 +5618,73 @@ typing-extensions = ">=4.10.0"
 [package.extras]
 doc = ["Sphinx (>=7)", "packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme (>=1.3.0)"]
 test = ["coverage[toml] (>=7)", "mypy (>=1.2.0)", "pytest (>=7)"]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/simple"
+reference = "nexus"
+
+[[package]]
+name = "types-beautifulsoup4"
+version = "4.12.0.20241020"
+description = "Typing stubs for beautifulsoup4"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-beautifulsoup4-4.12.0.20241020.tar.gz", hash = "sha256:158370d08d0cd448bd11b132a50ff5279237a5d4b5837beba074de152a513059"},
+    {file = "types_beautifulsoup4-4.12.0.20241020-py3-none-any.whl", hash = "sha256:c95e66ce15a4f5f0835f7fbc5cd886321ae8294f977c495424eaf4225307fd30"},
+]
+
+[package.dependencies]
+types-html5lib = "*"
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/simple"
+reference = "nexus"
+
+[[package]]
+name = "types-colorama"
+version = "0.4.15.20240311"
+description = "Typing stubs for colorama"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-colorama-0.4.15.20240311.tar.gz", hash = "sha256:a28e7f98d17d2b14fb9565d32388e419f4108f557a7d939a66319969b2b99c7a"},
+    {file = "types_colorama-0.4.15.20240311-py3-none-any.whl", hash = "sha256:6391de60ddc0db3f147e31ecb230006a6823e81e380862ffca1e4695c13a0b8e"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/simple"
+reference = "nexus"
+
+[[package]]
+name = "types-html5lib"
+version = "1.1.11.20241018"
+description = "Typing stubs for html5lib"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-html5lib-1.1.11.20241018.tar.gz", hash = "sha256:98042555ff78d9e3a51c77c918b1041acbb7eb6c405408d8a9e150ff5beccafa"},
+    {file = "types_html5lib-1.1.11.20241018-py3-none-any.whl", hash = "sha256:3f1e064d9ed2c289001ae6392c84c93833abb0816165c6ff0abfc304a779f403"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/simple"
+reference = "nexus"
+
+[[package]]
+name = "types-openpyxl"
+version = "3.1.5.20241025"
+description = "Typing stubs for openpyxl"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-openpyxl-3.1.5.20241025.tar.gz", hash = "sha256:16089ea33238877994f2740f7f12d60f937d8c670a7589fc6d5434561c960da3"},
+    {file = "types_openpyxl-3.1.5.20241025-py3-none-any.whl", hash = "sha256:6f0cd1fe7a0b488c1df53786e10aad4887c5f85eeb19e3ac288cc4083214050e"},
+]
 
 [package.source]
 type = "legacy"
@@ -6285,4 +6449,4 @@ reference = "nexus"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "a8570ae54d7fb4d8a75cffd501ee2f6671a8a0f938ac93d5ac6426d00c9687d8"
+content-hash = "9a63f533a4739cc5aa66e1b7777dca49fa0bf34725974811cb08a93f4b5281f5"

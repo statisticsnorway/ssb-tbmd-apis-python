@@ -20,9 +20,8 @@ ipykernel = ">=6.29.5"
 zeep = ">=4.3.1"
 lxml = ">=5.3.0"
 pandas = ">=2.2.3"
-pyarrow = ">=17.0.0"
-dapla-toolbelt-metadata = "^0.2.5"
-oracledb = "^2.5.0"
+dapla-toolbelt-metadata = ">=0.2.5"
+ssb-fagfunksjoner = ">=1.0.6"
 
 [tool.poetry.group.dev.dependencies]
 pygments = "=2.17.2"  # Change after prodsone stabilzes 
@@ -42,6 +41,7 @@ sphinx-click = ">=3.0.2"
 typeguard = ">=2.13.3"
 xdoctest = { extras = ["colors"], version = ">=0.15.10" }
 myst-parser = { version = ">=0.16.1" }
+
 
 
 

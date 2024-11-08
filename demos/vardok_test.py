@@ -21,6 +21,9 @@ from ssb_tbmd_apis.operations.operations_vardok import vardok_concept_variables_
 len(vardok_concept_variables_by_owner("360"))
 
 # %% jupyter={"outputs_hidden": true}
+vardok_concept_variables_by_owner("360")
+
+# %% jupyter={"outputs_hidden": true}
 vardok_concept_variables_by_name_def("nus2000")
 
 # %%

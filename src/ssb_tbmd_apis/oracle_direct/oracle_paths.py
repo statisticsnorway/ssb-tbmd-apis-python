@@ -1,6 +1,7 @@
 import getpass
 import pandas as pd
-import oracledb
+from fagfunksjoner.prodsone.oradb import Oracle
+from oracledb import Error as OraError
 
 
 def paths_in_substamme(stamme_substamme: list[tuple[str, str]] | tuple[str, str] | str, database: str) -> list[str]:
@@ -28,7 +29,9 @@ def paths_in_substamme(stamme_substamme: list[tuple[str, str]] | tuple[str, str]
     if isinstance(stamme_substamme, str):
         stamme_substamme = tuple(stamme_substamme.split("/"))
     if isinstance(stamme_substamme, tuple):
-        stamme_substamme = [stamme_substamme]
+        stamme_substamme_pairs = [stamme_substamme]
+    else:
+        stamme_substamme_pairs = stamme_substamme
     
     # Typecheck
     if not isinstance(stamme_substamme_pairs, list):
@@ -80,21 +83,16 @@ def paths_in_substamme(stamme_substamme: list[tuple[str, str]] | tuple[str, str]
     full_query = " UNION ALL ".join(union_queries)
     
     results = []
-    user = getpass.getuser()
     try:
-        with oracledb.connect(user=user,
-                             password=getpass.getpass(f"Oracle password for {user}: "),
-                             dsn=database) as conn:
-            with conn.cursor() as cur:
-                # execute the select SQL query
-                cur.execute(full_query)
-                # gets all the data in batches
-                while True:
-                    rows = cur.fetchmany(1000)
-                    if not rows:
-                        break
-                    else:
-                        results += [x[0] for x in rows]
-    except oracledb.Error as error:
+        with Oracle(db=database) as concur:
+            concur.execute(full_query)
+            # gets all the data in batches
+            while True:
+                rows = concur.fetchmany(1000)
+                if not rows:
+                    break
+                else:
+                    results += [x[0] for x in rows]
+    except OraError as error:
         raise error
     return results
