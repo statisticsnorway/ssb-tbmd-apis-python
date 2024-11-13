@@ -9,16 +9,22 @@ homepage = "https://github.com/statisticsnorway/ssb-tbmd-apis-python"
 repository = "https://github.com/statisticsnorway/ssb-tbmd-apis-python"
 documentation = "https://statisticsnorway.github.io/ssb-tbmd-apis-python"
 classifiers = ["Development Status :: 1 - Planning"]
+packages = [{include = "ssb_tbmd_apis", from = "src"}]
 
 [tool.poetry.urls]
 Changelog = "https://github.com/statisticsnorway/ssb-tbmd-apis-python/releases"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-click = ">=8.0.1"
+python = ">=3.10,<4.0"
+ipykernel = ">=6.29.5"
+zeep = ">=4.3.1"
+lxml = ">=5.3.0"
+pandas = ">=2.2.3"
+dapla-toolbelt-metadata = ">=0.2.5"
+ssb-fagfunksjoner = ">=1.0.6"
 
 [tool.poetry.group.dev.dependencies]
-pygments = ">=2.10.0"
+pygments = "=2.17.2"  # Change after prodsone stabilzes 
 black = { extras = ["jupyter"], version = ">=23.1.0" }
 coverage = { extras = ["toml"], version = ">=6.2" }
 darglint = ">=1.8.1"
@@ -36,11 +42,23 @@ typeguard = ">=2.13.3"
 xdoctest = { extras = ["colors"], version = ">=0.15.10" }
 myst-parser = { version = ">=0.16.1" }
 
+
+
+
+
+
+
+
+[[tool.poetry.source]]
+name = "nexus"
+url = "https://pypi.org/simple"
+priority = "primary"
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 
 [tool.poetry.scripts]
-ssb-tbmd-apis-python = "ssb_tbmd_apis_python.__main__:main"
+ssb-tbmd-apis-python = "ssb_tbmd_apis.__main__:main"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
@@ -48,7 +66,7 @@ tests = ["tests", "*/tests"]
 
 [tool.coverage.run]
 branch = true
-source = ["ssb_tbmd_apis_python", "tests"]
+source = ["ssb_tbmd_apis", "tests"]
 relative_files = true
 
 [tool.coverage.report]
