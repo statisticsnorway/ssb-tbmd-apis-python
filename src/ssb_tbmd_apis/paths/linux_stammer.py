@@ -3,11 +3,12 @@ import os
 def linux_stammer(insert_environ: bool = False, flip: bool = False) -> dict[str, str]:
     """Manually load the "linux-forkortelser" in as dict.
 
-    If the function can find the file they are shared in.
-
     Args:
         insert_environ: Set to True if you want the dict to be inserted into the
             environment variables (os.environ).
+        flip: Set to True if you want to flip the dict, so that the keys are the
+            values and the values are the keys. This is useful if you want to
+            convert a path with a "linux-forkortelse" to the full path.
 
     Returns:
         dict[str, str]:  The "linux-forkortelser" as a dict

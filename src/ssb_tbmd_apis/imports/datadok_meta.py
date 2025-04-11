@@ -4,6 +4,14 @@ import pandas as pd
 
 
 def datadok_vars_dataframe_by_path(path: str) -> pd.DataFrame:
+    """Read datadok file and convert it to a pandas DataFrame.
+    
+    Args:
+        path: Path to the datadok file.
+        
+    Returns:
+        pd.DataFrame: DataFrame containing the datadok variables.
+    """
     if os.environ.get("DAPLA_REGION", "") == "ON_PREM":
         gjfor_ddok = datadok_file_description_by_path(path)
     else:
