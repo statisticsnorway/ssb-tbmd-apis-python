@@ -14,20 +14,22 @@
 # ---
 
 # %%
-from ssb_tbmd_apis.exports.migrerdok import save_migrerdok_for_flatfile, get_colnames_from_migrerdok
-from ssb_tbmd_apis.exports.migrermetadb import save_metadb_vars
-from ssb_tbmd_apis.exports.migrervar import save_vardok_variables_belong_section
+from ssb_tbmd_apis.exports.migrerdok import save_migrerdok_for_flatfile
 
 # %%
 path = "$UTD/nudb/arkiv/vg_vitnemal/g2002"
 
 # %%
-migrer_path = save_migrerdok_for_flatfile("$UTD_PII/nudb/arkiv/vg_vitnemal/g2001g2010", overwrite=True)
+migrer_path = save_migrerdok_for_flatfile(
+    "$UTD_PII/nudb/arkiv/vg_vitnemal/g2001g2010", overwrite=True
+)
 
 # %%
 import glob
-paths = (glob.glob("/ssb/stamme01/utd_pii/nudb/arkiv/**/**/*.dat", recursive=True) +
-         glob.glob("/ssb/stamme01/utd_pii/nudb/arkiv/**/**/*.txt", recursive=True))
+
+paths = glob.glob(
+    "/ssb/stamme01/utd_pii/nudb/arkiv/**/**/*.dat", recursive=True
+) + glob.glob("/ssb/stamme01/utd_pii/nudb/arkiv/**/**/*.txt", recursive=True)
 for path in paths:
     try:
         save_migrerdok_for_flatfile(path, overwrite=True)

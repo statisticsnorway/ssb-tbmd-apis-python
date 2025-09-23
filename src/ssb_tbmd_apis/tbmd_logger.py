@@ -4,7 +4,9 @@ import logging
 import sys
 from typing import Any
 
-from colorama import Back, Fore, Style
+from colorama import Back
+from colorama import Fore
+from colorama import Style
 
 
 class ColoredFormatter(logging.Formatter):

@@ -14,23 +14,26 @@
 # ---
 
 # %% jupyter={"outputs_hidden": true}
-from ssb_tbmd_apis_python import get_zeep_client
 from ssb_tbmd_apis_python.zeep_client import ZeepClientManager
 
-with ZeepClientManager(wsdl="http://ws.ssb.no/VardokService/VardokService.asmx?WSDL") as client:
-    print(getattr(client.service, "GetConceptVariablesByNameDef")("nus2000"))
+with ZeepClientManager(
+    wsdl="http://ws.ssb.no/VardokService/VardokService.asmx?WSDL"
+) as client:
+    print(client.service.GetConceptVariablesByNameDef("nus2000"))
 
 # %%
-from ssb_tbmd_apis import datadok_file_description_by_path, datadok_vars_dataframe_by_path, dtypes_datadok_to_pandas
+from ssb_tbmd_apis import datadok_file_description_by_path
+from ssb_tbmd_apis import datadok_vars_dataframe_by_path
+from ssb_tbmd_apis import dtypes_datadok_to_pandas
 
 # %%
-from ssb_tbmd_apis_python import get_zeep_client
 
 # %%
 path = "$UTD/gjfor_vgo/arkiv/5s6y/g2017g2023"
 
 # %%
 from ssb_tbmd_apis.operations.operations_datadok import datadok_file_description_by_path
+
 gjfor_ddok = datadok_file_description_by_path("$UTD/nudb/arkiv/avslutta/g2019g2020/")
 
 # %%
@@ -46,7 +49,12 @@ gjfor_ddok["ContextVariable"]
 df = datadok_vars_dataframe_by_path(path)
 
 # %%
-from ssb_tbmd_apis_python.operations.operations_datadok import datadok_codelist_by_reference, datadok_context_variable_by_reference
+from ssb_tbmd_apis_python.operations.operations_datadok import (
+    datadok_codelist_by_reference,
+)
+from ssb_tbmd_apis_python.operations.operations_datadok import (
+    datadok_context_variable_by_reference,
+)
 
 # %% jupyter={"outputs_hidden": true}
 datadok_context_variable_by_reference("$UTD/nudb/arkiv/avslutta/g2019g2020/spesund")
@@ -56,6 +64,7 @@ datadok_codelist_by_reference("$KULTMED/kulturbruk/arkiv/bruttoutvalg/g2021/Kino
 
 # %% jupyter={"outputs_hidden": true}
 from ssb_tbmd_apis.operations.operations_vardok import vardok_concept_variables_by_owner
+
 our_vars = vardok_concept_variables_by_owner(360)
 our_vars
 
@@ -67,7 +76,10 @@ for var in our_vars:
     print(var["DefinitionGrp"]["Definition"][0]["_value_1"])
 
 # %%
-from ssb_tbmd_apis_python.operations.operations_vardok import vardok_concept_variables_by_name_def
+from ssb_tbmd_apis_python.operations.operations_vardok import (
+    vardok_concept_variables_by_name_def,
+)
+
 vardok_concept_variables_by_name_def("kilde")
 
 # %%

@@ -1,5 +1,6 @@
 import os
 
+
 def linux_stammer(insert_environ: bool = False, flip: bool = False) -> dict[str, str]:
     """Manually load the "linux-forkortelser" in as dict.
 

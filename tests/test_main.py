@@ -2,7 +2,6 @@
 
 import pytest
 from click.testing import CliRunner
-
 from ssb_tbmd_apis_python import __main__
 
 
