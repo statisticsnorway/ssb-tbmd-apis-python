@@ -26,7 +26,7 @@ def vardok_codelists() -> OrderedDict[str, Any]:
     Returns:
         OrderedDict: The serialized zeep OrderedDict.
     """
-    return get_zeep_serialize("vardok", "GetCodelists", codelist_id)
+    return get_zeep_serialize("vardok", "GetCodelists")
 
 
 def vardok_concept_variable_by_id(var_id: str | int) -> OrderedDict[str, Any]:
@@ -181,9 +181,9 @@ def vardok_version_by_concept_variable_id(
     F.eks 2007 urn:ssb:conceptvariable:vardok:2007
 
     Args:
-        subject_area: The ID of the concept variable.
+        variable_id: The ID of the concept variable.
 
     Returns:
         OrderedDict: The serialized zeep OrderedDict.
     """
-    return get_zeep_serialize("vardok", "GetVersionsByConceptVariableId", subject_area)
+    return get_zeep_serialize("vardok", "GetVersionsByConceptVariableId", variable_id)

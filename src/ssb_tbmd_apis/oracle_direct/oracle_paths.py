@@ -22,7 +22,7 @@ def paths_in_substamme(
 
     Raises:
         TypeError: If the stamme_substamme parameter does not result in a list of tuples containing two strings.
-        error: If the fetching from database doesnt work out.
+        OraError: If the fetching from database doesnt work out.
 
     """
     # Support different informats by wrapping simple types in iterators

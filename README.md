@@ -24,6 +24,11 @@
 [black]: https://github.com/psf/black
 [poetry]: https://python-poetry.org/
 
+
+## Lenker onprem:
+http://ws.ssb.no/Default.aspx
+http://trac.ssb.no/tbmd
+
 ## Features
 
 ### TODO

@@ -1,13 +1,10 @@
 import json
 from pathlib import Path
+from typing import Any
 
-import pandas as pd
-from dapla_metadata.datasets import Datadoc
-from dapla_metadata.datasets.statistic_subject_mapping import StatisticSubjectMapping
 from fagfunksjoner.paths.versions import latest_version_path
 from fagfunksjoner.paths.versions import next_version_path
 
-from ssb_tbmd_apis.imports.datadok_open_flatfile import datadok_open_flatfile_from_path
 from ssb_tbmd_apis.operations.operations_datadok import datadok_file_description_by_path
 from ssb_tbmd_apis.paths.try_variations import swap_dollar_sign
 from ssb_tbmd_apis.tbmd_logger import logger
@@ -25,6 +22,9 @@ def save_migrerdok_for_flatfile(
 
     Returns:
         Path: Path to the saved datadok file.
+
+    Raises:
+        OSError: If the file already exists, and overwrite is False.
     """
     # Get old meta from old datadok
     ddok_contents, ddok_save_path = datadok_file_description_by_path(flatfile)
@@ -63,8 +63,10 @@ def save_migrerdok_for_flatfile(
             logger.info(
                 "Datadok contents equals old version, no point in versioning it up."
             )
-    else:
-        raise OSError(f"Not overwriting existing file {ddok_path}")
+    elif not overwrite:
+        raise OSError(
+            f"Not overwriting existing file {ddok_path}, set overwrite to True if you want to overwrite."
+        )
     return ddok_path
 
 
@@ -84,54 +86,7 @@ def get_colnames_from_migrerdok(migrerdok: str | Path) -> list[str]:
     return colnames
 
 
-def convert_dat_save_migrerdok(
-    flatfile: str, output_parquet: str, overwrite: bool = False
-) -> tuple[pd.DataFrame, Datadoc]:
-    raise NotImplementedError()
-
-    df = datadok_open_flatfile_from_path(flatfile)
-
-    meta_old = save_migrerdata_for_flatfile(flatfile, overwrite)
-
-    meta_doc = Datadoc(
-        output_parquet,
-        statistic_subject_mapping=StatisticSubjectMapping(source_url=None),
-    )
-    meta_doc = migrate_meta_datadok_oldnew(meta_old, meta_doc)
-
-    return df, meta_doc
-
-
-def migrate_meta_datadok_oldnew(meta_old: str | Path, meta: str | Path) -> Datadoc:
-    raise NotImplementedError()
-
-    # Title
-    title = meta_old["Title"]["_value_1"]
-
-    # Description
-    desc = meta_old["Description"]["_value_1"]
-
-    # ContactInformation
-    person = meta_old["ContactInformation"]["Person"]
-    division = meta_old["ContactInformation"]["Division"]
-
-    # ContextVariable
-    variables = meta_old["ContextVariable"]
-
-    codelists = {}
-    for var in variables:
-        var_title = var["Title"]["_value_1"]
-        var_desc = var["Description"]["_value_1"]
-        var_comment = var["Comments"]
-        var_ref = var["VariableReference"]
-
-        if var["Codelist"] is not None:
-            codelists[var_title] = var["Codelist"]
-
-    return meta, codelists
-
-
-def deep_equal(dict1, dict2):
+def deep_equal(dict1: dict[str, Any], dict2: dict[str, Any]) -> bool:
     """Recursively check equality between two dictionaries, ignoring the order of lists.
 
     Args:
@@ -140,9 +95,12 @@ def deep_equal(dict1, dict2):
 
     Returns:
         bool: True if the dictionaries are equal, otherwise False.
+
+    Raises:
+        TypeError: If you send anything else than two dictionaries in, we have a problem.
     """
-    if type(dict1) != type(dict2):
-        return False
+    if not isinstance(dict1, dict) or not isinstance(dict2, dict):
+        raise TypeError("Both elements must be dictionaries")
 
     if isinstance(dict1, dict):
         if dict1.keys() != dict2.keys():

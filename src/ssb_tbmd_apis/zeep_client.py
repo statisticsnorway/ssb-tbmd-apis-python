@@ -36,7 +36,7 @@ class LocalResolverTransport(zeep.transports.Transport):
 class ZeepClientManager:
     """Context manager for Zeep client to handle WSDL and session management."""
 
-    def __init__(self, wsdl: str):
+    def __init__(self, wsdl: str) -> None:
         """Initialize the ZeepClientManager with the provided WSDL URL.
 
         Args:
@@ -46,7 +46,7 @@ class ZeepClientManager:
         self.session = None
         self.client = None
 
-    def __enter__(self):
+    def __enter__(self) -> zeep.Client:
         """Create a Zeep client and return it."""
         self.session = requests.Session()
         transport = LocalResolverTransport(session=self.session)
@@ -58,7 +58,7 @@ class ZeepClientManager:
         type_: type[BaseException] | None,
         value: BaseException | None,
         traceback: TracebackType | None,
-    ):
+    ) -> None:
         """Close the session and clean up resources."""
         if self.session:
             self.session.close()
@@ -92,7 +92,9 @@ def get_zeep_client(tbmd_service: str = "datadok") -> ZeepClientManager:
 
 
 def get_zeep_serialize(
-    tbmd_service: str = "datadok", operation: str = "GetFileDescriptionByPath", *args
+    tbmd_service: str = "datadok",
+    operation: str = "GetFileDescriptionByPath",
+    *args: str,
 ) -> OrderedDict[str, Any]:
     """Get serialized response from the Zeep client for the specified operation.
 

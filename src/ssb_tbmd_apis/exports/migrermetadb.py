@@ -52,6 +52,9 @@ def save_metadb_vars(
     Returns:
         dict: A dictionary where the keys are the variable names and the values are
               the corresponding metadb codelists.
+
+    Raises:
+        OSError: If file already exists, and overwrite is not set to True.
     """
     outpath = swap_dollar_sign(outpath)
     logger.info(f"After swapping dollar {outpath}")
