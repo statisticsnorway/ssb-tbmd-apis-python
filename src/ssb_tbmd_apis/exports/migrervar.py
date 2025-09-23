@@ -8,7 +8,7 @@ from ssb_tbmd_apis.paths.try_variations import swap_dollar_sign
 
 
 def save_vardok_variables_belong_section(
-    section: int, path: str | Path, overwrite: bool = False
+    section: int, path: Path, overwrite: bool = False
 ) -> OrderedDict[str, Any]:
     """Save Vardok variables belonging to a section to a JSON file.
 
@@ -23,10 +23,10 @@ def save_vardok_variables_belong_section(
     Raises:
         OSError: If the file already exists and overwrite is set to False.
     """
-    outpath = swap_dollar_sign(path)
+    outpath = swap_dollar_sign(Path(path))
     content = vardok_concept_variables_by_owner(section)
     if not outpath.is_file() or overwrite:
-        with open(outpath, "w") as jsonfile:
+        with outpath.open("w") as jsonfile:
             json.dump(content, jsonfile, default=str)
     else:
         raise OSError(f"Set overwrite to True, if you want to overwrtie: {outpath}")

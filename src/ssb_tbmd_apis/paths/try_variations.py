@@ -1,6 +1,4 @@
 import datetime
-import glob
-import os
 from collections import OrderedDict
 from pathlib import Path
 from typing import Any
@@ -39,10 +37,12 @@ def try_zeep_serialize_path(
     file_path = path.with_suffix("")
 
     # Swap for $-path
-    stm = linux_stammer(flip=True)
-    for dollar_name, real_path in stm.items():
+    stm: dict[Path, str] = linux_stammer(flip=True)
+    for real_path, dollar_name in stm.items():
         if file_path.is_relative_to(real_path):
-            file_path = Path("$" + dollar_name) / "/".join(file_path.parts[len(real_path.parts):])
+            file_path = Path("$" + dollar_name) / "/".join(
+                file_path.parts[len(real_path.parts) :]
+            )
             logger.info(
                 f"When looking in datadok, we will be using the dollar-stamme {real_path}: {file_path}"
             )
@@ -54,10 +54,10 @@ def try_zeep_serialize_path(
     file_path = Path(*parts)
 
     # Try without PII
-    for variation in period_variations_path(str(file_path)):
+    for variation in period_variations_path(file_path):
         try:
             return (
-                get_zeep_serialize(tbmd_service, operation, variation),
+                get_zeep_serialize(tbmd_service, operation, str(variation)),
                 Path(variation),
             )
         except zeep.exceptions.Fault as e:
@@ -68,10 +68,10 @@ def try_zeep_serialize_path(
     parts[0] = parts[0] + "_PII"
     file_path = Path(*parts)
 
-    for variation in period_variations_path(str(file_path)):
+    for variation in period_variations_path(file_path):
         try:
             return (
-                get_zeep_serialize(tbmd_service, operation, variation),
+                get_zeep_serialize(tbmd_service, operation, str(variation)),
                 Path(variation),
             )
         except zeep.exceptions.Fault as e:
@@ -95,9 +95,11 @@ def swap_dollar_sign(path: Path) -> Path:
     outpath = Path(path)
 
     first_part = outpath.parts[0]
-    if first_part.startswith("$"):
-        first_part = first_part[1:]
-    replace = linux_stammer().get(first_part, None)
+    # Mypy - my love
+    first_part_not_none: str = first_part
+    if first_part_not_none.startswith("$"):
+        first_part_not_none = first_part_not_none[1:]
+    replace = linux_stammer().get(first_part_not_none, None)
     if replace is not None:
         outpath = Path(replace) / Path(*outpath.parts[1:])
     return outpath
@@ -132,7 +134,7 @@ def look_for_file_on_disk(path: Path) -> Path:
             return check_path
 
     # Attempt three, look to see if we can find single match using glob
-    single_match =_exactly_one(path_no_ext.parent)
+    single_match = _exactly_one(path_no_ext.parent)
     if single_match:
         return single_match
 
@@ -142,11 +144,12 @@ def look_for_file_on_disk(path: Path) -> Path:
         parts[3] = parts[3][:-4]
     else:
         parts[3] += "_pii"
-    single_match =_exactly_one(Path(*parts).parent)
+    single_match = _exactly_one(Path(*parts).parent)
     if single_match:
         return single_match
 
     raise FileNotFoundError("Cant find single file with that path on local drive.")
+
 
 def _exactly_one(path: Path) -> Path | None:
     glob_result = list(path.glob("*"))

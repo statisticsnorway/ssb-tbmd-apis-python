@@ -106,7 +106,7 @@ def datadok_file_description_by_path(
         OrderedDict: The serialized zeep OrderedDict.
     """
     return try_zeep_serialize_path(
-        file_path,
+        Path(file_path),
         tbmd_service="datadok",
         operation="GetFileDescriptionByPath",
     )

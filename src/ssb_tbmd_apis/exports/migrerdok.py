@@ -27,10 +27,12 @@ def save_migrerdok_for_flatfile(
         OSError: If the file already exists, and overwrite is False.
     """
     # Get old meta from old datadok
-    ddok_contents, ddok_save_path = datadok_file_description_by_path(flatfile)
+    ddok_contents, ddok_save_path = datadok_file_description_by_path(Path(flatfile))
 
     # Construct path
-    ddok_path: Path = ddok_save_path.parent / (ddok_save_path.stem + "__MIGRERDOK_v1.json")
+    ddok_path: Path = ddok_save_path.parent / (
+        ddok_save_path.stem + "__MIGRERDOK_v1.json"
+    )
     ddok_path = swap_dollar_sign(ddok_path)
 
     # Write non-existing file / overwrite
@@ -70,7 +72,7 @@ def save_migrerdok_for_flatfile(
     return ddok_path
 
 
-def get_colnames_from_migrerdok(migrerdok: str | Path) -> list[str]:
+def get_colnames_from_migrerdok(migrerdok: Path) -> list[str]:
     """Get column names from a migrerdok file.
 
     Args:
@@ -79,7 +81,7 @@ def get_colnames_from_migrerdok(migrerdok: str | Path) -> list[str]:
     Returns:
         list[str]: List of column names.
     """
-    path = swap_dollar_sign(migrerdok)
+    path = swap_dollar_sign(Path(migrerdok))
     with open(path) as migrerout:
         contents = json.load(migrerout)
     colnames = [x["Title"]["_value_1"] for x in contents["ContextVariable"]]

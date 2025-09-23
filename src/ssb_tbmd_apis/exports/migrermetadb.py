@@ -40,7 +40,7 @@ def get_metadb_vars(varnames: list[str]) -> dict[str, OrderedDict[str, Any]]:
 
 
 def save_metadb_vars(
-    varnames: list[str], outpath: str | Path, overwrite: bool = False
+    varnames: list[str], outpath: Path, overwrite: bool = False
 ) -> dict[str, OrderedDict[str, Any]]:
     """Save metadb variables to a JSON file.
 
@@ -56,7 +56,7 @@ def save_metadb_vars(
     Raises:
         OSError: If file already exists, and overwrite is not set to True.
     """
-    outpath = swap_dollar_sign(outpath)
+    outpath = swap_dollar_sign(Path(outpath))
     logger.info(f"After swapping dollar {outpath}")
     suffix = "__MIGRERMETADB.json"
     if not outpath.name.endswith(suffix):

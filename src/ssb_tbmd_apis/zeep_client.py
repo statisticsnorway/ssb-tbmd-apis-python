@@ -1,11 +1,13 @@
 import os
 from collections import OrderedDict
 from types import TracebackType
-from typing import Any, Protocol, cast, no_type_check
+from typing import Any
+from typing import Protocol
+from typing import cast
+from typing import no_type_check
 
 import requests
 import zeep
-
 
 
 class LocalResolverTransport(zeep.transports.Transport):
@@ -31,7 +33,7 @@ class LocalResolverTransport(zeep.transports.Transport):
             xsd_path = os.path.join(xsds_dir, "w3_org_2001_xml.xsd")
             with open(xsd_path, "rb") as f:
                 return f.read()
-            
+
         # Trying to please mypy
         parent = cast(_TransportProto, super())
         result: bytes = parent.load(url)
@@ -42,6 +44,7 @@ class LocalResolverTransport(zeep.transports.Transport):
 class _TransportProto(Protocol):
     def load(self, url: str) -> bytes: ...
 
+
 class ZeepLikeClient(Protocol):
     """A minimal protocol for the Zeep SOAP client.
 
@@ -50,6 +53,7 @@ class ZeepLikeClient(Protocol):
     library (which does not ship stubs). It only defines the subset of the client
     interface that is commonly used in this project.
     """
+
     @property
     def service(self) -> Any:
         """Service proxy for SOAP operations.
@@ -60,15 +64,17 @@ class ZeepLikeClient(Protocol):
         """
         ...
 
+
 @no_type_check
 def _mk_client(wsdl: str, transport: Any) -> Any:
     import zeep  # local import avoids global import-time typing issues
+
     return zeep.Client(wsdl=wsdl, transport=transport)
+
 
 @no_type_check
 def _mk_transport(session: requests.Session) -> LocalResolverTransport:
     return LocalResolverTransport(session=session)
-
 
 
 class ZeepClientManager:
@@ -146,4 +152,6 @@ def get_zeep_serialize(
     """
     with get_zeep_client(tbmd_service) as client:
         response = getattr(client.service, operation)(*args)
-    return cast(OrderedDict[str, Any], zeep.helpers.serialize_object(response))  # Type-narrowing for mypy
+    return cast(
+        OrderedDict[str, Any], zeep.helpers.serialize_object(response)
+    )  # Type-narrowing for mypy

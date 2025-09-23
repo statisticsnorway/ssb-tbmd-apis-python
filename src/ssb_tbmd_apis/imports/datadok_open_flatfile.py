@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -9,7 +10,7 @@ from ssb_tbmd_apis.paths.try_variations import look_for_file_on_disk
 
 
 def datadok_open_flatfile_from_path(
-    path: Path, ddok_path: str | None = None, **read_fwf_params: Any
+    path: Path, ddok_path: Path | None = None, **read_fwf_params: Any
 ) -> pd.DataFrame:
     """Open a flat file from Datadok and convert it to a pandas DataFrame.
 
@@ -25,9 +26,9 @@ def datadok_open_flatfile_from_path(
         read_fwf_params["encoding"] = "latin1"
 
     if ddok_path is not None:
-        var_df = datadok_vars_dataframe_by_path(ddok_path)
+        var_df = datadok_vars_dataframe_by_path(Path(ddok_path))
     else:
-        var_df = datadok_vars_dataframe_by_path(path)
+        var_df = datadok_vars_dataframe_by_path(Path(path))
 
     dtypes = dtypes_datadok_to_pandas(var_df)
 

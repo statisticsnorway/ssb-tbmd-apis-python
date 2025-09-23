@@ -27,7 +27,9 @@ def paths_in_substamme(
     """
     # Support different informats by wrapping simple types in iterators
     if isinstance(stamme_substamme, str):
-        stamme_substamme_pairs: list[tuple[str, ...]] = [tuple(stamme_substamme.split("/"))]
+        stamme_substamme_pairs: list[tuple[str, ...]] = [
+            tuple(stamme_substamme.split("/"))
+        ]
     elif isinstance(stamme_substamme, tuple):
         stamme_substamme_pairs = [stamme_substamme]
     else:

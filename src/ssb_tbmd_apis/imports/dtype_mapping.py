@@ -19,6 +19,9 @@ def dtypes_datadok_to_pandas(ddok_var_df: pd.DataFrame) -> dict[str, str]:
         df = ddok_var_df.T
     dtypes: dict[str, str] = {}
 
+    colname: str
+    properties: dict[str, str]
+
     for colname, properties in df.iterrows():
         if "Tekst" == properties["Datatype"]:
             dtypes[colname] = "string[pyarrow]"
