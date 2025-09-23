@@ -20,7 +20,7 @@ def dtypes_datadok_to_pandas(ddok_var_df: pd.DataFrame) -> dict[str, str]:
     for colname, properties in df.iterrows():
         if "Tekst" == properties["Datatype"]:
             dtypes[colname] = "string[pyarrow]"
-        elif properties["Datatype"] in ["Desimaltall", "Desim. (K)"]:
+        elif properties["Datatype"] in ["Desimaltall", "Desim. (K)", "Desim. (P)"]:
             dtypes[colname] = "Float64"
         elif "Heltall" == properties["Datatype"]:
             dtypes[colname] = intwidth_to_pandas_dtype(properties["Length"])
