@@ -7,9 +7,7 @@ license = "MIT"
 readme = "README.md"
 requires-python = ">=3.10,<4.0"
 dynamic = ["classifiers"]
-dependencies = [
-    "click>=8.0.1",
-]
+
 
 [tool.poetry]
 classifiers = ["Development Status :: 1 - Planning"]
@@ -29,6 +27,7 @@ lxml = ">=5.3.0"
 pandas = ">=2.2.3"
 dapla-toolbelt-metadata = ">=0.2.5"
 ssb-fagfunksjoner = ">=1.0.6"
+oracledb = "^3.3.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -50,6 +49,9 @@ typeguard = ">=2.13.3"
 xdoctest = { extras = ["colors"], version = ">=0.15.10" }
 myst-parser = { version = ">=0.16.1" }
 deptry = ">=0.23.0"
+# Stubs for Mypy
+pandas-stubs = ">=2.1.1.230928"
+types-requests = ">=2.31.0.10"
 
 [tool.poetry.requires-plugins]
 poetry-plugin-export = ">=1.9"

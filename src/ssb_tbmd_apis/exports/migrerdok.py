@@ -86,33 +86,30 @@ def get_colnames_from_migrerdok(migrerdok: str | Path) -> list[str]:
     return colnames
 
 
-def deep_equal(dict1: dict[str, Any], dict2: dict[str, Any]) -> bool:
-    """Recursively check equality between two dictionaries, ignoring the order of lists.
+def deep_equal(elem1: Any, elem2: Any) -> bool | list[bool | Any]:
+    """Recursively check equality between two elements, ignoring the order of lists.
 
     Args:
-        dict1 (dict): The first dictionary to compare.
-        dict2 (dict): The second dictionary to compare.
+        elem1: The first element to compare.
+        elem2: The second element to compare.
 
     Returns:
-        bool: True if the dictionaries are equal, otherwise False.
-
-    Raises:
-        TypeError: If you send anything else than two dictionaries in, we have a problem.
+        bool: True if the elements are equal, otherwise False.
     """
-    if not isinstance(dict1, dict) or not isinstance(dict2, dict):
-        raise TypeError("Both elements must be dictionaries")
+    if not isinstance(elem1, type(elem2)):
+        return False
 
-    if isinstance(dict1, dict):
-        if dict1.keys() != dict2.keys():
+    if isinstance(elem1, dict):
+        if elem1.keys() != elem2.keys():
             return False
-        return all(deep_equal(dict1[key], dict2[key]) for key in dict1)
+        return all(deep_equal(elem1[key], elem2[key]) for key in elem1)
 
-    if isinstance(dict1, list):
-        if len(dict1) != len(dict2):
+    if isinstance(elem1, list):
+        if len(elem1) != len(elem2):
             return False
         return sorted(
-            deep_equal(item, dict2[i]) if isinstance(item, dict) else item
-            for i, item in enumerate(dict1)
+            deep_equal(item, elem2[i]) if isinstance(item, dict) else item
+            for i, item in enumerate(elem1)
         )
 
-    return dict1 == dict2
+    return bool(elem1 == elem2)

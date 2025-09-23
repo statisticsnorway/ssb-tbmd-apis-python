@@ -108,4 +108,5 @@ def get_zeep_serialize(
     """
     with get_zeep_client(tbmd_service) as client:
         response = getattr(client.service, operation)(*args)
-    return zeep.helpers.serialize_object(response)
+    result: OrderedDict[str, Any] = zeep.helpers.serialize_object(response)  # Type-narrowing for mypy
+    return result
