@@ -15,7 +15,16 @@ from typing import Any
 
 def save_migrerdok_for_flatfile(flatfile: str | Path,
                                 version_up: bool = True,
-                                overwrite: bool = False) -> Path:   
+                                overwrite: bool = False) -> Path:
+    """Save datadok contents to a file, and version up if needed.
+
+    Args:
+        flatfile: Path to the flatfile.
+        version_up: Whether to version up the file if it exists.
+        overwrite: Whether to overwrite the file if it exists.
+    Returns:
+        Path: Path to the saved datadok file.
+    """ 
     # Get old meta from old datadok
     ddok_contents, ddok_save_path = datadok_file_description_by_path(flatfile)
     
@@ -52,6 +61,14 @@ def save_migrerdok_for_flatfile(flatfile: str | Path,
     return ddok_path
 
 def get_colnames_from_migrerdok(migrerdok: str | Path) -> list[str]:
+    """Get column names from a migrerdok file.
+    
+    Args:
+        migrerdok: Path to the migrerdok file.
+    
+    Returns:
+        list[str]: List of column names.
+    """
     path = swap_dollar_sign(migrerdok)
     with open(path, "r") as migrerout:
         contents = json.load(migrerout)
@@ -108,8 +125,7 @@ def migrate_meta_datadok_oldnew(meta_old: str | Path,
     
     
 def deep_equal(dict1, dict2):
-    """
-    Recursively check equality between two dictionaries, ignoring the order of lists.
+    """Recursively check equality between two dictionaries, ignoring the order of lists.
 
     Args:
         dict1 (dict): The first dictionary to compare.

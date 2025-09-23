@@ -1,6 +1,16 @@
 import pandas as pd
 
 def dtypes_datadok_to_pandas(ddok_var_df: pd.DataFrame) -> dict[str, str]:
+    """Map Datadok variable types to pandas dtypes.
+    
+    Args:
+        ddok_var_df: DataFrame containing Datadok variable information.
+    Returns:
+        dict[str, str]: Dictionary mapping variable names to pandas dtypes.
+    Raises:
+        NotImplementedError: If an unsupported datatype is encountered.
+    """
+    
     if "Datatype" in ddok_var_df:
         df = ddok_var_df
     else:
@@ -22,6 +32,15 @@ def dtypes_datadok_to_pandas(ddok_var_df: pd.DataFrame) -> dict[str, str]:
             
 
 def intwidth_to_pandas_dtype(precision: int) -> str:
+    """Convert integer width to pandas dtype.
+    
+    Args:
+        precision: Integer width.
+    Returns:
+        str: Corresponding pandas dtype.
+    Raises:
+        ValueError: If precision is too large for pandas Int types.
+    """
     precision = int(precision)
 
     precisions = {

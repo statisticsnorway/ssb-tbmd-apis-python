@@ -14,6 +14,17 @@ def try_zeep_serialize_path(path: str,
                             tbmd_service: str = "datadok",
                             operation: str = "GetFileDescriptionByPath",
                            ) -> tuple[OrderedDict[str, Any], Path]:
+    """Try many different paths to get the file description from the datadok API using the provided path as a starting point.
+    
+    Args:
+        path: Path to the file.
+        tbmd_service: The TBMD service to use (default is "datadok").
+        operation: The operation to perform (default is "GetFileDescriptionByPath").
+    Returns:
+        tuple: A tuple containing the file description and the path.
+    Raises:
+        FileNotFoundError: If the file description cannot be found.
+    """
     # Remove extension
     file_path = path.split(".")[0]
     # Swap for $-path
@@ -50,6 +61,15 @@ def try_zeep_serialize_path(path: str,
 
 
 def swap_dollar_sign(path: str | Path) -> Path:
+    """Swap the dollar sign in the path with the corresponding path from linux_stammer.
+    
+    Args:
+        path: Path to the file.
+    Returns:
+        Path: The modified path with the dollar sign swapped.
+    Raises:
+        TypeError: If the path is not a string or a Path object.
+    """
     if isinstance(path, str):
         outpath = Path(path)
     elif isinstance(path, Path):
@@ -67,6 +87,15 @@ def swap_dollar_sign(path: str | Path) -> Path:
 
 
 def look_for_file_on_disk(path: str) -> str:
+    """Look for a file on disk using various methods.
+    
+    Args:
+        path: Path to the file.
+    Returns:
+        str: The path to the discovered file.
+    Raises:
+        FileNotFoundError: If the file cannot be found.
+    """
     # Swap dollar sign
     path = swap_dollar_sign(path)
     
@@ -108,7 +137,13 @@ def look_for_file_on_disk(path: str) -> str:
     
 
 def period_variations_path(path: str) -> list[str]:
+    """Generate variations of the path based on periods in the filename.
     
+    Args:
+        path: Path to the file.
+    Returns:
+        list[str]: List of variations of the path.
+    """
     # Find periods in path
     periods = []
     temp_name = Path(path).stem

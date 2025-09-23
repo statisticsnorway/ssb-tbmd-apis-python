@@ -11,6 +11,14 @@ from ssb_tbmd_apis.paths.try_variations import swap_dollar_sign
 
 
 def get_metadb_vars(varnames: list[str]) -> dict[str, OrderedDict[str, Any]]:
+    """Get metadb variables from the API based on the provided variable names.
+
+    Args:
+        varnames: List of variable names to search for in the metadb.
+    Returns:
+        dict: A dictionary where the keys are the variable names and the values are
+              the corresponding metadb codelists.
+    """
     metadb = {x["CodelistMeta"]["Title"]["_value_1"]: x["id"] for x in metadb_codelists()}
     codelist_codes = {}
     for var in varnames:
@@ -28,6 +36,16 @@ def get_metadb_vars(varnames: list[str]) -> dict[str, OrderedDict[str, Any]]:
 def save_metadb_vars(varnames: list[str],
                      outpath: str | Path,
                      overwrite: bool = False) -> dict[str, OrderedDict[str, Any]]:
+    """Save metadb variables to a JSON file.
+    
+    Args:
+        varnames: List of variable names to save.
+        outpath: Path to the output JSON file.
+        overwrite: Whether to overwrite the file if it exists.
+    Returns:
+        dict: A dictionary where the keys are the variable names and the values are
+              the corresponding metadb codelists.
+    """
     outpath = swap_dollar_sign(outpath)
     logger.info(f"After swapping dollar {outpath}")
     suffix = "__MIGRERMETADB.json"
