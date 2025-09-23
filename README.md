@@ -18,7 +18,6 @@
 [pypi status]: https://pypi.org/project/ssb-tbmd-apis-python/
 [documentation]: https://statisticsnorway.github.io/ssb-tbmd-apis-python
 [tests]: https://github.com/statisticsnorway/ssb-tbmd-apis-python/actions?workflow=Tests
-
 [sonarcov]: https://sonarcloud.io/summary/overall?id=statisticsnorway_ssb-tbmd-apis-python
 [sonarquality]: https://sonarcloud.io/summary/overall?id=statisticsnorway_ssb-tbmd-apis-python
 [pre-commit]: https://github.com/pre-commit/pre-commit
