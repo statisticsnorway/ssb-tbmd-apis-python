@@ -3,9 +3,18 @@ import requests
 import zeep
 from collections import OrderedDict
 from typing import Any
+from types import TracebackType
 
 class LocalResolverTransport(zeep.transports.Transport):
-    def load(self, url):
+    """Custom transport class to load local XSD files for Zeep client."""
+    def load(self, url: str) -> bytes:
+        """Load XSD files from local directory instead of fetching them from the internet.
+        
+        Args:
+            url (str): The URL of the XSD file to load.
+        Returns:
+            bytes: The content of the XSD file.
+        """
         base_dir = os.path.dirname(__file__)
         xsds_dir = os.path.join(base_dir, 'xsds')
         
@@ -20,24 +29,44 @@ class LocalResolverTransport(zeep.transports.Transport):
         return super().load(url)
 
 class ZeepClientManager:
-    def __init__(self, wsdl):
+    """Context manager for Zeep client to handle WSDL and session management."""
+    def __init__(self, wsdl: str):
+        """Initialize the ZeepClientManager with the provided WSDL URL.
+        Args:
+            wsdl (str): The WSDL URL for the Zeep client.
+        """
         self.wsdl = wsdl
         self.session = None
         self.client = None
 
     def __enter__(self):
+        """Create a Zeep client and return it."""
         self.session = requests.Session()
         transport = LocalResolverTransport(session=self.session)
         self.client = zeep.Client(wsdl=self.wsdl, transport=transport)
         return self.client
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(
+            self,
+            type_: type[BaseException] | None,
+            value: BaseException | None,
+            traceback: TracebackType | None,):
+        """Close the session and clean up resources."""
         if self.session:
             self.session.close()
         self.client = None
 
         
 def get_zeep_client(tbmd_service: str = "datadok") -> ZeepClientManager:
+    """Get a Zeep client for the specified TBMD service.
+    
+    Args:
+        tbmd_service: The TBMD service to use (default is "datadok").
+    Returns:
+        ZeepClientManager: A context manager for the Zeep client.
+    Raises:
+        NotImplementedError: If the specified TBMD service is not implemented.
+    """
     wsdls = {
         "datadok": "http://ws.ssb.no/DatadokService/DatadokService.asmx?WSDL",
         "metadb":  "http://ws.ssb.no/MetaDbService/MetaDbService.asmx?WSDL",
@@ -55,6 +84,14 @@ def get_zeep_client(tbmd_service: str = "datadok") -> ZeepClientManager:
 def get_zeep_serialize(tbmd_service: str = "datadok",
                        operation: str = "GetFileDescriptionByPath",
                        *args) -> OrderedDict[str, Any]:
+    """Get serialized response from the Zeep client for the specified operation.
+    Args:
+        tbmd_service (str): The TBMD service to use (default is "datadok").
+        operation (str): The operation to perform (default is "GetFileDescriptionByPath").
+        *args: Arguments for the operation.
+    Returns:
+        OrderedDict: The serialized response from the Zeep client.
+    """
     with get_zeep_client(tbmd_service) as client:
         response = getattr(client.service, operation)(*args)
     return zeep.helpers.serialize_object(response)
