@@ -16,69 +16,71 @@ TIME_TRAVEL = 20
 
 
 def try_zeep_serialize_path(
-    path: str,
+    path: Path,
     tbmd_service: str = "datadok",
     operation: str = "GetFileDescriptionByPath",
 ) -> tuple[OrderedDict[str, Any], Path]:
-    """Try many different paths to get the file description from the datadok API using the provided path as a starting point.
+    """Try many different paths to get the file description from the datadok API.
 
     Args:
-        path: Path to the file.
+        path: Path to the file (string or Path).
         tbmd_service: The TBMD service to use (default is "datadok").
         operation: The operation to perform (default is "GetFileDescriptionByPath").
 
     Returns:
-        tuple: A tuple containing the file description and the path.
+        tuple: A tuple containing the file description and the resolved Path.
 
     Raises:
         FileNotFoundError: If the file description cannot be found.
     """
+    path = Path(path)
+
     # Remove extension
-    file_path = path.split(".")[0]
+    file_path = path.with_suffix("")
+
     # Swap for $-path
     stm = linux_stammer(flip=True)
-    for k, v in stm.items():
-        if file_path.startswith(k + os.sep):
-            file_path = file_path.replace(k + os.sep, v + os.sep)
-            if not file_path.startswith("$"):
-                file_path = "$" + file_path
+    for dollar_name, real_path in stm.items():
+        if file_path.is_relative_to(real_path):
+            file_path = Path("$" + dollar_name) / "/".join(file_path.parts[len(real_path.parts):])
             logger.info(
-                f"When looking in datadok, we will be using the dollar-stamme {v}: {file_path}"
+                f"When looking in datadok, we will be using the dollar-stamme {real_path}: {file_path}"
             )
             break
 
-    # Remove PII at the start
-    file_path = os.sep.join(
-        [file_path.split(os.sep)[0].replace("_PII", ""), *file_path.split(os.sep)[1:]]
-    )
+    # Remove "_PII" at the start of the first part
+    parts = list(file_path.parts)
+    parts[0] = parts[0].replace("_PII", "")
+    file_path = Path(*parts)
 
     # Try without PII
-    variations = period_variations_path(file_path)
-    for variation in variations:
+    for variation in period_variations_path(str(file_path)):
         try:
-            return get_zeep_serialize(
-                "datadok", "GetFileDescriptionByPath", variation
-            ), Path(variation)
+            return (
+                get_zeep_serialize(tbmd_service, operation, variation),
+                Path(variation),
+            )
         except zeep.exceptions.Fault as e:
-            logger.info(f"Couldnt find datadok entry at {variation}.: {e}")
+            logger.info(f"Could not find datadok entry at {variation}: {e}")
 
-    # Try with "PII"
-    file_path = (
-        file_path.split(os.sep)[0] + "_PII/" + os.sep.join(file_path.split(os.sep)[1:])
-    )
-    variations = period_variations_path(file_path)
-    for variation in variations:
+    # Try with "_PII" again
+    parts = list(file_path.parts)
+    parts[0] = parts[0] + "_PII"
+    file_path = Path(*parts)
+
+    for variation in period_variations_path(str(file_path)):
         try:
-            return get_zeep_serialize(
-                "datadok", "GetFileDescriptionByPath", variation
-            ), Path(variation)
+            return (
+                get_zeep_serialize(tbmd_service, operation, variation),
+                Path(variation),
+            )
         except zeep.exceptions.Fault as e:
-            logger.info(f"Couldnt find datadok entry at {variation}: {e}")
+            logger.info(f"Could not find datadok entry at {variation}: {e}")
 
     raise FileNotFoundError(f"Failed looking for path in datadok-api: {path}")
 
 
-def swap_dollar_sign(path: str | Path) -> Path:
+def swap_dollar_sign(path: Path) -> Path:
     """Swap the dollar sign in the path with the corresponding path from linux_stammer.
 
     Args:
@@ -90,12 +92,7 @@ def swap_dollar_sign(path: str | Path) -> Path:
     Raises:
         TypeError: If the path is not a string or a Path object.
     """
-    if isinstance(path, str):
-        outpath = Path(path)
-    elif isinstance(path, Path):
-        outpath = path
-    else:
-        raise TypeError("Path in is not a str or pathlib.Path.")
+    outpath = Path(path)
 
     first_part = outpath.parts[0]
     if first_part.startswith("$"):
@@ -106,7 +103,7 @@ def swap_dollar_sign(path: str | Path) -> Path:
     return outpath
 
 
-def look_for_file_on_disk(path: str) -> str:
+def look_for_file_on_disk(path: Path) -> Path:
     """Look for a file on disk using various methods.
 
     Args:
@@ -122,43 +119,45 @@ def look_for_file_on_disk(path: str) -> str:
     path = swap_dollar_sign(path)
 
     # Attempt one, look for specific file
-    if os.path.isfile(path):
+    if path.is_file():
         logger.info(f"Discovered file to open at {path}.")
         return path
 
     # Attempt two, look for common file extensions
-    path_no_ext = path.rsplit(".", 1)[0]
+    path_no_ext = path.with_suffix("")
     for ext in KNOWN_EXTENSIONS:
-        check_path = path_no_ext + ext
-        if os.path.isfile(check_path):
+        check_path = path_no_ext.with_suffix(ext)
+        if check_path.is_file():
             logger.info(f"Discovered file to open at {check_path}.")
             return check_path
 
     # Attempt three, look to see if we can find single match using glob
-    glob_result = glob.glob(path_no_ext + "*")
-    if len(glob_result) == 1:
-        logger.info(f"Discovered file to open at {glob_result[0]}.")
-        return glob_result[0]
-    else:
-        f"Too many files discovered (more than one): {glob_result}"
+    single_match =_exactly_one(path_no_ext.parent)
+    if single_match:
+        return single_match
 
     # Attempt four, flip pii
-    path_parts = path_no_ext.split(os.sep)
-    if path_parts[3].endswith("_pii"):
-        path_parts[3] = path_parts[3][:-4]
+    parts = list(path_no_ext.parts)
+    if parts[3].endswith("_pii"):
+        parts[3] = parts[3][:-4]
     else:
-        path_parts[3] += "_pii"
-    glob_result = glob.glob(os.sep.join(path_parts) + "*")
-    if len(glob_result) == 1:
-        logger.info(f"Discovered file to open at {glob_result[0]}.")
-        return glob_result[0]
-    else:
-        f"Too many files discovered (more than one): {glob_result}"
+        parts[3] += "_pii"
+    single_match =_exactly_one(Path(*parts).parent)
+    if single_match:
+        return single_match
 
     raise FileNotFoundError("Cant find single file with that path on local drive.")
 
+def _exactly_one(path: Path) -> Path | None:
+    glob_result = list(path.glob("*"))
+    if len(glob_result) == 1:
+        logger.info(f"Discovered file to open at {glob_result[0]}.")
+        return glob_result[0]
+    f"Too many files discovered (more than one): {glob_result}"
+    return None
 
-def period_variations_path(path: str) -> list[str]:
+
+def period_variations_path(path: Path) -> list[Path]:
     """Generate variations of the path based on periods in the filename.
 
     Args:

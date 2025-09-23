@@ -93,7 +93,7 @@ def datadok_file_description_by_id(file_id: int | str) -> OrderedDict[str, Any]:
 
 
 def datadok_file_description_by_path(
-    file_path: str,
+    file_path: Path,
 ) -> tuple[OrderedDict[str, Any], Path]:
     """Rutinen skal returnere én filbeskrivelse basert på gitt Datadok sti.
 

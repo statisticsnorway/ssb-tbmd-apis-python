@@ -11,7 +11,7 @@ from ssb_tbmd_apis.tbmd_logger import logger
 
 
 def save_migrerdok_for_flatfile(
-    flatfile: str | Path, version_up: bool = True, overwrite: bool = False
+    flatfile: Path, version_up: bool = True, overwrite: bool = False
 ) -> Path:
     """Save datadok contents to a file, and version up if needed.
 
@@ -30,7 +30,7 @@ def save_migrerdok_for_flatfile(
     ddok_contents, ddok_save_path = datadok_file_description_by_path(flatfile)
 
     # Construct path
-    ddok_path = ddok_save_path.parent / (ddok_save_path.stem + "__MIGRERDOK_v1.json")
+    ddok_path: Path = ddok_save_path.parent / (ddok_save_path.stem + "__MIGRERDOK_v1.json")
     ddok_path = swap_dollar_sign(ddok_path)
 
     # Write non-existing file / overwrite

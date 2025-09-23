@@ -1,10 +1,11 @@
 import os
 from collections import OrderedDict
 from types import TracebackType
-from typing import Any
+from typing import Any, Protocol, cast, no_type_check
 
 import requests
 import zeep
+
 
 
 class LocalResolverTransport(zeep.transports.Transport):
@@ -30,7 +31,44 @@ class LocalResolverTransport(zeep.transports.Transport):
             xsd_path = os.path.join(xsds_dir, "w3_org_2001_xml.xsd")
             with open(xsd_path, "rb") as f:
                 return f.read()
-        return super().load(url)
+            
+        # Trying to please mypy
+        parent = cast(_TransportProto, super())
+        result: bytes = parent.load(url)
+        return result
+
+
+# Used to force type hinting for mypy
+class _TransportProto(Protocol):
+    def load(self, url: str) -> bytes: ...
+
+class ZeepLikeClient(Protocol):
+    """A minimal protocol for the Zeep SOAP client.
+
+    This protocol is used to provide static type checking for code that interacts
+    with a Zeep client without requiring full type information from the `zeep`
+    library (which does not ship stubs). It only defines the subset of the client
+    interface that is commonly used in this project.
+    """
+    @property
+    def service(self) -> Any:
+        """Service proxy for SOAP operations.
+
+        The `service` property provides access to the operations defined in the
+        WSDL. Each operation is exposed as a callable attribute on this object,
+        which can be invoked like a normal Python function.
+        """
+        ...
+
+@no_type_check
+def _mk_client(wsdl: str, transport: Any) -> Any:
+    import zeep  # local import avoids global import-time typing issues
+    return zeep.Client(wsdl=wsdl, transport=transport)
+
+@no_type_check
+def _mk_transport(session: requests.Session) -> LocalResolverTransport:
+    return LocalResolverTransport(session=session)
+
 
 
 class ZeepClientManager:
@@ -43,14 +81,14 @@ class ZeepClientManager:
             wsdl (str): The WSDL URL for the Zeep client.
         """
         self.wsdl = wsdl
-        self.session = None
-        self.client = None
+        self.session: None | requests.Session = None
+        self.client: None | zeep.Client = None
 
     def __enter__(self) -> zeep.Client:
         """Create a Zeep client and return it."""
         self.session = requests.Session()
-        transport = LocalResolverTransport(session=self.session)
-        self.client = zeep.Client(wsdl=self.wsdl, transport=transport)
+        transport = _mk_transport(self.session)
+        self.client = _mk_client(self.wsdl, transport)
         return self.client
 
     def __exit__(
@@ -94,7 +132,7 @@ def get_zeep_client(tbmd_service: str = "datadok") -> ZeepClientManager:
 def get_zeep_serialize(
     tbmd_service: str = "datadok",
     operation: str = "GetFileDescriptionByPath",
-    *args: str,
+    *args: str | int,
 ) -> OrderedDict[str, Any]:
     """Get serialized response from the Zeep client for the specified operation.
 
@@ -108,5 +146,4 @@ def get_zeep_serialize(
     """
     with get_zeep_client(tbmd_service) as client:
         response = getattr(client.service, operation)(*args)
-    result: OrderedDict[str, Any] = zeep.helpers.serialize_object(response)  # Type-narrowing for mypy
-    return result
+    return cast(OrderedDict[str, Any], zeep.helpers.serialize_object(response))  # Type-narrowing for mypy

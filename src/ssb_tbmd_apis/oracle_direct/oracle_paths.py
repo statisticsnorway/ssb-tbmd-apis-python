@@ -3,7 +3,7 @@ from oracledb import Error as OraError
 
 
 def paths_in_substamme(
-    stamme_substamme: list[tuple[str, str]] | tuple[str, str] | str, database: str
+    stamme_substamme: list[tuple[str, ...]] | tuple[str, ...] | str, database: str
 ) -> list[str]:
     """Try to recreate the paths used by Datadok under a stamme and substamme.
 
@@ -27,8 +27,8 @@ def paths_in_substamme(
     """
     # Support different informats by wrapping simple types in iterators
     if isinstance(stamme_substamme, str):
-        stamme_substamme = tuple(stamme_substamme.split("/"))
-    if isinstance(stamme_substamme, tuple):
+        stamme_substamme_pairs: list[tuple[str, ...]] = [tuple(stamme_substamme.split("/"))]
+    elif isinstance(stamme_substamme, tuple):
         stamme_substamme_pairs = [stamme_substamme]
     else:
         stamme_substamme_pairs = stamme_substamme

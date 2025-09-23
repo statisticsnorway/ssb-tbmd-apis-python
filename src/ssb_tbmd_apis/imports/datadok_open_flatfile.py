@@ -9,7 +9,7 @@ from ssb_tbmd_apis.paths.try_variations import look_for_file_on_disk
 
 
 def datadok_open_flatfile_from_path(
-    path: str, ddok_path: str | None = None, **read_fwf_params: Any
+    path: Path, ddok_path: str | None = None, **read_fwf_params: Any
 ) -> pd.DataFrame:
     """Open a flat file from Datadok and convert it to a pandas DataFrame.
 
@@ -38,7 +38,7 @@ def datadok_open_flatfile_from_path(
 
     if "ON_PREM" == os.environ.get("DAPLA_REGION", ""):
         path = look_for_file_on_disk(path)
-    df = pd.read_fwf(
+    df: pd.DataFrame = pd.read_fwf(
         path,
         widths=var_df.T["Length"].to_list(),
         names=dtypes.keys(),

@@ -1,7 +1,8 @@
 import os
+from pathlib import Path
 
 
-def linux_stammer(insert_environ: bool = False, flip: bool = False) -> dict[str, str]:
+def linux_stammer(insert_environ: bool = False, flip: bool = False) -> dict[str, Path] | dict[Path, str]:
     """Manually load the "linux-forkortelser" in as dict.
 
     Args:
@@ -26,7 +27,7 @@ def linux_stammer(insert_environ: bool = False, flip: bool = False) -> dict[str,
                 if len(line_parts) != 2:
                     raise ValueError("Too many equal-signs?")
                 first: str = line_parts[0]  # Helping mypy
-                second: str = line_parts[1]  # Helping mypy
+                second: Path = Path(line_parts[1])  # Helping mypy
                 stm[first] = second
                 if insert_environ:
                     os.environ[first] = second
