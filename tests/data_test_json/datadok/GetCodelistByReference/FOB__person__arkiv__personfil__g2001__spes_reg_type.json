@@ -1,0 +1,26 @@
+{
+  "CodelistMeta": {
+    "Title": { "_value_1": "spes_reg_type", "lang": null },
+    "Description": { "_value_1": "Spesiell registreringstype", "lang": null },
+    "ContactInformation": { "Person": "oru", "Division": "320" }
+  },
+  "Codes": {
+    "Code": [
+      {
+        "CodeValue": "0",
+        "CodeText": { "_value_1": "Vanlig bosatt", "lang": null },
+        "id": "698827", "validFrom": null, "validTo": null, "lastChangedDate": null
+      },
+      {
+        "CodeValue": "1",
+        "CodeText": { "_value_1": "Utenriks", "lang": null },
+        "id": "698828", "validFrom": null, "validTo": null, "lastChangedDate": null
+      }
+    ]
+  },
+  "id": "urn:ssb:codelist:datadok:865507",
+  "defaultValidFrom": null,
+  "defaultValidTo": null,
+  "lastChangedBy": null,
+  "lastChangedDate": null
+}
