@@ -5,12 +5,12 @@ from typing import Any
 from typing import Protocol
 
 import pytest
-from tests.utils.json_payloads import load_fixture
-from tests.utils.json_payloads import ref_to_name
 
 import ssb_tbmd_apis.operations.operations_datadok as ops_mod  # module to patch
 from ssb_tbmd_apis.operations.operations_datadok import datadok_codelist_by_id
 from ssb_tbmd_apis.operations.operations_datadok import datadok_codelist_by_reference
+from tests.utils.json_payloads import load_fixture
+from tests.utils.json_payloads import ref_to_name
 
 
 class _GetZeepSerialize(Protocol):
