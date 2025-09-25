@@ -25,6 +25,10 @@
 [poetry]: https://python-poetry.org/
 
 
+# Tjenestebibliotek for metadata
+Is a 16-year old API built on top of Oracle in SSBs ON-prem environment for getting at metadata.\
+This package is written for extracting the information where possible. 
+
 ## Lenker onprem:
 http://ws.ssb.no/Default.aspx
 http://trac.ssb.no/tbmd
@@ -32,20 +36,13 @@ http://trac.ssb.no/tbmd
 ## Features
 
 ### TODO
-1. Store metadata (\_\_MIGRERDOK.json) from old datadok to a temp json file on disk
-1. Allow to convert .dat using the MIGRERDOK-file, test in cloud
-
-
-## Requirements
-
-- TODO
 
 ## Installation
 
 You can install _SSB Tbmd Apis Python_ via [pip] from [PyPI]:
 
 ```console
-pip install ssb-tbmd-apis-python
+poetry add ssb-tbmd-apis-python
 ```
 
 ## Usage
