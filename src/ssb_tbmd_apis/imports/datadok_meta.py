@@ -17,7 +17,7 @@ def datadok_vars_dataframe_by_path(path: Path) -> pd.DataFrame:
         pd.DataFrame: DataFrame containing the datadok variables.
     """
     if os.environ.get("DAPLA_REGION", "") == "ON_PREM":
-        gjfor_ddok = datadok_file_description_by_path(Path(path))
+        gjfor_ddok, _path = datadok_file_description_by_path(Path(path))
     else:
         with open(path) as migrerdok:
             gjfor_ddok = json.load(migrerdok)

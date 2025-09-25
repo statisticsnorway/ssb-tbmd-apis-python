@@ -19,16 +19,15 @@ def dtypes_datadok_to_pandas(ddok_var_df: pd.DataFrame) -> dict[str, str]:
         df = ddok_var_df.T
     dtypes: dict[str, str] = {}
 
-    colname: str
-    properties: dict[str, str]
-
-    for colname, properties in df.iterrows():
+    for colname_hash, properties_series in df.iterrows():
+        colname: str = str(colname_hash)
+        properties: dict[str, str] = {str(k): str(v) for k, v in properties_series.to_dict().items()}
         if "Tekst" == properties["Datatype"]:
             dtypes[colname] = "string[pyarrow]"
         elif properties["Datatype"] in ["Desimaltall", "Desim. (K)", "Desim. (P)"]:
             dtypes[colname] = "Float64"
         elif "Heltall" == properties["Datatype"]:
-            dtypes[colname] = intwidth_to_pandas_dtype(properties["Length"])
+            dtypes[colname] = intwidth_to_pandas_dtype(int(properties["Length"]))
         ## MISSING LOGIC FOR OTHER TYPES - DATES?
         else:
             raise NotImplementedError(

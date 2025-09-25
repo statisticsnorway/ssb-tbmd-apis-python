@@ -2,12 +2,16 @@ import os
 from collections import OrderedDict
 from types import TracebackType
 from typing import Any
+from typing import Callable
 from typing import Protocol
 from typing import cast
 from typing import no_type_check
 
 import requests
 import zeep
+
+
+SERIALIZE_T = Callable[[Any], OrderedDict[str, Any]]
 
 
 class LocalResolverTransport(zeep.transports.Transport):
@@ -68,13 +72,15 @@ class ZeepLikeClient(Protocol):
 @no_type_check
 def _mk_client(wsdl: str, transport: Any) -> Any:
     import zeep  # local import avoids global import-time typing issues
-
     return zeep.Client(wsdl=wsdl, transport=transport)
-
 
 @no_type_check
 def _mk_transport(session: requests.Session) -> LocalResolverTransport:
     return LocalResolverTransport(session=session)
+
+@no_type_check
+def _serialize_object_ntc(obj: Any) -> OrderedDict[str, Any]:
+    return zeep.helpers.serialize_object(obj)
 
 
 class ZeepClientManager:
@@ -152,6 +158,6 @@ def get_zeep_serialize(
     """
     with get_zeep_client(tbmd_service) as client:
         response = getattr(client.service, operation)(*args)
-    return cast(
-        OrderedDict[str, Any], zeep.helpers.serialize_object(response)
-    )  # Type-narrowing for mypy
+    
+    result: OrderedDict[str, Any] = _serialize_object_ntc(response)
+    return result
