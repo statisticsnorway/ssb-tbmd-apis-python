@@ -1,13 +1,18 @@
 import os
 from pathlib import Path
-from typing import Literal, overload
+from typing import Literal
+from typing import overload
 
 
 # Dependant on the flag flip there are two options for the return type
 @overload
-def linux_stammer(*, insert_environ: bool = False, flip: Literal[True]) -> dict[Path, str]: ...
+def linux_stammer(
+    *, insert_environ: bool = False, flip: Literal[True]
+) -> dict[Path, str]: ...
 @overload
-def linux_stammer(*, insert_environ: bool = False, flip: Literal[False] = False) -> dict[str, Path]: ...
+def linux_stammer(
+    *, insert_environ: bool = False, flip: Literal[False] = False
+) -> dict[str, Path]: ...
 
 
 def linux_stammer(

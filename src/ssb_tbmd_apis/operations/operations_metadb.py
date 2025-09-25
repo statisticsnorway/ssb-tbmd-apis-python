@@ -4,6 +4,16 @@ from collections import OrderedDict
 from typing import Any
 
 from ssb_tbmd_apis.zeep_client import get_zeep_serialize
+from ssb_tbmd_apis.zeep_client import get_zeep_serialize_list
+
+
+def metadb_codelists() -> list[OrderedDict[str, Any]]:
+    """Rutinen skal returnere en oversikt over hvilke kodelister som finnes i metadb.
+
+    Returns:
+        OrderedDict: The serialized zeep OrderedDict.
+    """
+    return get_zeep_serialize_list("metadb", "GetCodelists")
 
 
 def metadb_codelist_by_id(codelist_id: int | str) -> OrderedDict[str, Any]:
@@ -18,15 +28,6 @@ def metadb_codelist_by_id(codelist_id: int | str) -> OrderedDict[str, Any]:
         OrderedDict: The serialized zeep OrderedDict.
     """
     return get_zeep_serialize("metadb", "GetCodelistById", codelist_id)
-
-
-def metadb_codelists() -> OrderedDict[str, Any]:
-    """Rutinen skal returnere en oversikt over hvilke kodelister som finnes i metadb.
-
-    Returns:
-        OrderedDict: The serialized zeep OrderedDict.
-    """
-    return get_zeep_serialize("metadb", "GetCodelists")
 
 
 def metadb_context_variable_by_id(var_id: int | str) -> OrderedDict[str, Any]:

@@ -21,7 +21,9 @@ def dtypes_datadok_to_pandas(ddok_var_df: pd.DataFrame) -> dict[str, str]:
 
     for colname_hash, properties_series in df.iterrows():
         colname: str = str(colname_hash)
-        properties: dict[str, str] = {str(k): str(v) for k, v in properties_series.to_dict().items()}
+        properties: dict[str, str] = {
+            str(k): str(v) for k, v in properties_series.to_dict().items()
+        }
         if "Tekst" == properties["Datatype"]:
             dtypes[colname] = "string[pyarrow]"
         elif properties["Datatype"] in ["Desimaltall", "Desim. (K)", "Desim. (P)"]:

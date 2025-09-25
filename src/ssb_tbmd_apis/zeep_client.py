@@ -1,15 +1,14 @@
 import os
 from collections import OrderedDict
+from collections.abc import Callable
 from types import TracebackType
 from typing import Any
-from typing import Callable
 from typing import Protocol
 from typing import cast
 from typing import no_type_check
 
 import requests
 import zeep
-
 
 SERIALIZE_T = Callable[[Any], OrderedDict[str, Any]]
 
@@ -72,11 +71,14 @@ class ZeepLikeClient(Protocol):
 @no_type_check
 def _mk_client(wsdl: str, transport: Any) -> Any:
     import zeep  # local import avoids global import-time typing issues
+
     return zeep.Client(wsdl=wsdl, transport=transport)
+
 
 @no_type_check
 def _mk_transport(session: requests.Session) -> LocalResolverTransport:
     return LocalResolverTransport(session=session)
+
 
 @no_type_check
 def _serialize_object_ntc(obj: Any) -> OrderedDict[str, Any]:
@@ -158,6 +160,29 @@ def get_zeep_serialize(
     """
     with get_zeep_client(tbmd_service) as client:
         response = getattr(client.service, operation)(*args)
-    
+
     result: OrderedDict[str, Any] = _serialize_object_ntc(response)
     return result
+
+
+# Bad DRY but good MYPY with this copy
+def get_zeep_serialize_list(
+    tbmd_service: str = "metadb",
+    operation: str = "GetCodelists",
+    *args: str | int,
+) -> list[OrderedDict[str, Any]]:
+    """Get serialized response from the Zeep client for the specified operation that returns a list.
+
+    Args:
+        tbmd_service (str): The TBMD service to use (default is "datadok").
+        operation (str): The operation to perform (default is "GetFileDescriptionByPath").
+        *args: Arguments for the operation.
+
+    Returns:
+        list[OrderedDict]: The serialized response from the Zeep client.
+    """
+    with get_zeep_client(tbmd_service) as client:
+        response = getattr(client.service, operation)(*args)
+
+    result_list: list[OrderedDict[str, Any]] = _serialize_object_ntc(response)
+    return result_list

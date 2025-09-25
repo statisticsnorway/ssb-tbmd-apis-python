@@ -88,9 +88,6 @@ def swap_dollar_sign(path: Path) -> Path:
 
     Returns:
         Path: The modified path with the dollar sign swapped.
-
-    Raises:
-        TypeError: If the path is not a string or a Path object.
     """
     outpath = Path(path)
 
@@ -112,7 +109,7 @@ def look_for_file_on_disk(path: Path) -> Path:
         path: Path to the file.
 
     Returns:
-        str: The path to the discovered file.
+        Path: The path to the discovered file.
 
     Raises:
         FileNotFoundError: If the file cannot be found.
