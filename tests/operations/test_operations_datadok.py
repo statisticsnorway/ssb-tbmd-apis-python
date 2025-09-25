@@ -1,27 +1,36 @@
 from __future__ import annotations
 
 from collections import OrderedDict
-from typing import Any, Callable, Protocol
-from pathlib import Path
+from typing import Any
+from typing import Protocol
 
 import pytest
+from tests.utils.json_payloads import load_fixture
+from tests.utils.json_payloads import ref_to_name
 
-from ssb_tbmd_apis.operations.operations_datadok import datadok_codelist_by_id, datadok_codelist_by_reference
 import ssb_tbmd_apis.operations.operations_datadok as ops_mod  # module to patch
-from tests.utils.json_payloads import load_fixture, ref_to_name
-
+from ssb_tbmd_apis.operations.operations_datadok import datadok_codelist_by_id
+from ssb_tbmd_apis.operations.operations_datadok import datadok_codelist_by_reference
 
 
 class _GetZeepSerialize(Protocol):
-    def __call__(self, tbmd_service: str, operation: str, *args: str | int) -> OrderedDict[str, Any]: ...
+    def __call__(
+        self, tbmd_service: str, operation: str, *args: str | int
+    ) -> OrderedDict[str, Any]: ...
 
 
 @pytest.mark.parametrize("codelist_id", [228589, "228589"])
-def test_codelist_by_id_from_json(monkeypatch: pytest.MonkeyPatch, codelist_id: int | str) -> None:
+def test_codelist_by_id_from_json(
+    monkeypatch: pytest.MonkeyPatch, codelist_id: int | str
+) -> None:
     # Load fixture (no hardcoded object-building):
-    fake_payload: OrderedDict[str, Any] = load_fixture("datadok", "GetCodelistById", "228589")
+    fake_payload: OrderedDict[str, Any] = load_fixture(
+        "datadok", "GetCodelistById", "228589"
+    )
 
-    def fake_get_zeep_serialize(tbmd_service: str, operation: str, *args: str | int) -> OrderedDict[str, Any]:
+    def fake_get_zeep_serialize(
+        tbmd_service: str, operation: str, *args: str | int
+    ) -> OrderedDict[str, Any]:
         assert tbmd_service == "datadok"
         assert operation == "GetCodelistById"
         # We accept either str or int id, mirroring the function signature:
@@ -29,7 +38,9 @@ def test_codelist_by_id_from_json(monkeypatch: pytest.MonkeyPatch, codelist_id: 
         return fake_payload
 
     # Patch where the function is looked up:
-    monkeypatch.setattr(ops_mod, "get_zeep_serialize", fake_get_zeep_serialize, raising=True)
+    monkeypatch.setattr(
+        ops_mod, "get_zeep_serialize", fake_get_zeep_serialize, raising=True
+    )
 
     # Exercise
     result = datadok_codelist_by_id(codelist_id)
@@ -52,15 +63,21 @@ def test_codelist_by_id_from_json(monkeypatch: pytest.MonkeyPatch, codelist_id: 
 def test_codelist_by_reference_from_json(monkeypatch: pytest.MonkeyPatch) -> None:
     ref = "$FOB/person/arkiv/personfil/g2001/spes_reg_type"
     name = ref_to_name(ref)
-    fake_payload: OrderedDict[str, Any] = load_fixture("datadok", "GetCodelistByReference", name)
+    fake_payload: OrderedDict[str, Any] = load_fixture(
+        "datadok", "GetCodelistByReference", name
+    )
 
-    def fake_get_zeep_serialize(tbmd_service: str, operation: str, *args: str | int) -> OrderedDict[str, Any]:
+    def fake_get_zeep_serialize(
+        tbmd_service: str, operation: str, *args: str | int
+    ) -> OrderedDict[str, Any]:
         assert tbmd_service == "datadok"
         assert operation == "GetCodelistByReference"
         assert args == (ref,)
         return fake_payload
 
-    monkeypatch.setattr(ops_mod, "get_zeep_serialize", fake_get_zeep_serialize, raising=True)
+    monkeypatch.setattr(
+        ops_mod, "get_zeep_serialize", fake_get_zeep_serialize, raising=True
+    )
 
     # Exercise
     result = datadok_codelist_by_reference(ref)

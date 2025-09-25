@@ -4,8 +4,8 @@ from __future__ import annotations
 import builtins
 import io
 import os
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 import pytest
 
@@ -80,7 +80,9 @@ def test_linux_stammer_inserts_environ(monkeypatch: pytest.MonkeyPatch) -> None:
     assert result["FOO"] == Path("/bar/baz")
 
 
-def test_linux_stammer_ignores_non_export_and_missing_equals(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_linux_stammer_ignores_non_export_and_missing_equals(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     content = """
 export ONLY_THIS=/ok/path
 export_missing_equals

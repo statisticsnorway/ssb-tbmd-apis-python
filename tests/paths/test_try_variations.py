@@ -1,9 +1,9 @@
 # tests/paths/test_period_variations.py
 from __future__ import annotations
 
-from pathlib import Path
 import datetime
-import types
+from pathlib import Path
+
 import pytest
 
 import ssb_tbmd_apis.paths.try_variations as tv
@@ -91,5 +91,7 @@ def test_two_period_variations_order_and_content(monkeypatch: pytest.MonkeyPatch
     head_2020 = parent / "g2020g2021"
     assert head_2020 in out
 
-    last_2021_idx = max(i for i, path in enumerate(out) if path.name.startswith("g2021"))
+    last_2021_idx = max(
+        i for i, path in enumerate(out) if path.name.startswith("g2021")
+    )
     assert out.index(head_2020) > last_2021_idx
