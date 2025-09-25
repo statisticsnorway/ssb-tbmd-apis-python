@@ -18,30 +18,31 @@
 [pypi status]: https://pypi.org/project/ssb-tbmd-apis-python/
 [documentation]: https://statisticsnorway.github.io/ssb-tbmd-apis-python
 [tests]: https://github.com/statisticsnorway/ssb-tbmd-apis-python/actions?workflow=Tests
-
 [sonarcov]: https://sonarcloud.io/summary/overall?id=statisticsnorway_ssb-tbmd-apis-python
 [sonarquality]: https://sonarcloud.io/summary/overall?id=statisticsnorway_ssb-tbmd-apis-python
 [pre-commit]: https://github.com/pre-commit/pre-commit
 [black]: https://github.com/psf/black
 [poetry]: https://python-poetry.org/
 
+
+# Tjenestebibliotek for metadata
+Is a 16-year old API built on top of Oracle in SSBs ON-prem environment for getting at metadata.\
+This package is written for extracting the information where possible.
+
+## Lenker onprem:
+http://ws.ssb.no/Default.aspx
+http://trac.ssb.no/tbmd
+
 ## Features
 
 ### TODO
-1. Store metadata (\_\_MIGRERDOK.json) from old datadok to a temp json file on disk
-1. Allow to convert .dat using the MIGRERDOK-file, test in cloud
-
-
-## Requirements
-
-- TODO
 
 ## Installation
 
 You can install _SSB Tbmd Apis Python_ via [pip] from [PyPI]:
 
 ```console
-pip install ssb-tbmd-apis-python
+poetry add ssb-tbmd-apis-python
 ```
 
 ## Usage

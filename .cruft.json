@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/statisticsnorway/ssb-pypitemplate.git",
-  "commit": "e6f0ca2794354d16838cf36d97bee2f9f70d3142",
+  "commit": "9e3c49f6680d4c400567c39d70b768f0a322c95e",
   "checkout": null,
   "context": {
     "cookiecutter": {
@@ -16,6 +16,8 @@
       "license": "MIT",
       "development_status": "Development Status :: 1 - Planning",
       "code_quality_level": "Medium",
+      "dependency_manager_tool": "poetry",
+      "department_number": "",
       "_copy_without_render": [
         "*.rst_t"
       ],

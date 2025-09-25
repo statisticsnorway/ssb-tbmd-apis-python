@@ -22,8 +22,9 @@ except ImportError:
     {sys.executable} -m pip install nox-poetry"""
     raise SystemExit(dedent(message)) from None
 
-package = "ssb_tbmd_apis_python"
-python_versions = ["3.10", "3.11", "3.12"]
+package = "ssb_tbmd_apis"
+python_versions = ["3.11", "3.12", "3.13"]
+python_versions_for_test = python_versions + ["3.10"]
 nox.needs_version = ">= 2021.6.6"
 nox.options.sessions = (
     "pre-commit",
@@ -142,15 +143,15 @@ def precommit(session: Session) -> None:
 @session(python=python_versions)
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
-    args = session.posargs or ["src", "tests"]
+    args = session.posargs or ["src"]
     session.install(".")
-    session.install("mypy", "pytest")
+    session.install("mypy", "pytest", "pandas-stubs", "types-requests")
     session.run("mypy", *args)
     if not session.posargs:
         session.run("mypy", f"--python-executable={sys.executable}", "noxfile.py")
 
 
-@session(python=python_versions)
+@session(python=python_versions_for_test)
 def tests(session: Session) -> None:
     """Run the test suite."""
     session.install(".")

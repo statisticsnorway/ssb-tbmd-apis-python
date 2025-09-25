@@ -1,0 +1,28 @@
+{
+  "CodelistMeta": {
+    "Title": { "_value_1": "kirkesamfunn", "lang": null },
+    "Description": { "_value_1": "Kirkesamfunn", "lang": null },
+    "ContactInformation": { "Person": "lfo", "Division": "360" }
+  },
+  "Codes": {
+    "Code": [
+      {
+        "CodeValue": "17",
+        "CodeText": { "_value_1": "Den engelske kirke i Norge (Anglican Chaplaincy)", "lang": null },
+        "id": "69508",
+        "validFrom": null, "validTo": null, "lastChangedDate": null
+      },
+      {
+        "CodeValue": "16",
+        "CodeText": { "_value_1": "Islam", "lang": null },
+        "id": "69507",
+        "validFrom": null, "validTo": null, "lastChangedDate": null
+      }
+    ]
+  },
+  "id": "urn:ssb:codelist:datadok:228589",
+  "defaultValidFrom": null,
+  "defaultValidTo": null,
+  "lastChangedBy": null,
+  "lastChangedDate": null
+}

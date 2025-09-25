@@ -1,6 +1,23 @@
 import os
+from pathlib import Path
+from typing import Literal
+from typing import overload
 
-def linux_stammer(insert_environ: bool = False, flip: bool = False) -> dict[str, str]:
+
+# Dependant on the flag flip there are two options for the return type
+@overload
+def linux_stammer(
+    *, insert_environ: bool = False, flip: Literal[True]
+) -> dict[Path, str]: ...
+@overload
+def linux_stammer(
+    *, insert_environ: bool = False, flip: Literal[False] = False
+) -> dict[str, Path]: ...
+
+
+def linux_stammer(
+    insert_environ: bool = False, flip: bool = False
+) -> dict[str, Path] | dict[Path, str]:
     """Manually load the "linux-forkortelser" in as dict.
 
     Args:
@@ -16,7 +33,7 @@ def linux_stammer(insert_environ: bool = False, flip: bool = False) -> dict[str,
     Raises:
         ValueError: If the stamme_variabel file is wrongly formatted.
     """
-    stm: dict[str, str] = {}
+    stm: dict[str, Path] = {}
     with open("/etc/profile.d/stamme_variabel") as stam_var:
         for line in stam_var:
             line = line.strip()
@@ -25,10 +42,11 @@ def linux_stammer(insert_environ: bool = False, flip: bool = False) -> dict[str,
                 if len(line_parts) != 2:
                     raise ValueError("Too many equal-signs?")
                 first: str = line_parts[0]  # Helping mypy
-                second: str = line_parts[1]  # Helping mypy
+                second: Path = Path(line_parts[1])  # Helping mypy
                 stm[first] = second
                 if insert_environ:
-                    os.environ[first] = second
+                    os.environ[first] = str(second)
     if flip:
-        return {v: k for k, v in stm.items()}
+        stm_flip: dict[Path, str] = {v: k for k, v in stm.items()}
+        return stm_flip
     return stm
