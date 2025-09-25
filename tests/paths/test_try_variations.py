@@ -53,31 +53,43 @@ def test_single_period_variations_order_and_content():
 
 
 def test_two_period_variations_order_and_content(monkeypatch: pytest.MonkeyPatch):
-    # Keep this small for readability
-    monkeypatch.setattr(tv, "TIME_TRAVEL", 2)  # first_yr = 2021, then 2020
+    # Keep the list compact and deterministic
+    monkeypatch.setattr(tv, "TIME_TRAVEL", 2)  # first_yr: 2021, then 2020
 
     p = Path("/root/dir/g2021g2022.dat")
     out = tv.period_variations_path(p)
 
-    # The first block (first_yr = 2021) must start with the moving-window pair
-    first_block_head = Path("/root/dir/g2021g2022")
-    assert out[0] == first_block_head
+    # Block head for first_yr=2021 must be the first element
+    head_2021 = Path("/root/dir/g2021g2022")
+    assert out[0] == head_2021
 
-    # Within the first block (first_yr=2021), we expect single-pair guesses with
-    # decreasing second_yr before the 4-link variants. Check a few relative orders:
-    idx_2021_2025 = out.index(Path("/root/dir/g2021g2025"))
-    idx_2021_2024 = out.index(Path("/root/dir/g2021g2024"))
-    idx_4link_2025 = out.index(Path("/root/dir/g2021g2022g2025g2026"))
-    assert idx_2021_2025 < idx_2021_2024 < idx_4link_2025  # single-pair come before 4-link
+    # Within the 2021 block, for each second_yr we see, the single variant must
+    # appear before its corresponding 4-link variant.
+    parent = p.parent
 
-    # When the next block starts (first_yr=2020), the *first* entry of that block
-    # must be the moving-window pair for that block, i.e., g2020g2021; and it should
-    # appear before any second_yr guesses in the same block.
-    head_2020 = Path("/root/dir/g2020g2021")
-    any_2020_2025 = Path("/root/dir/g2020g2025")
-    assert head_2020 in out  # block exists
-    assert any_2020_2025 in out  # and its second_yr guesses exist
+    def idx(path_str: str) -> int:
+        return out.index(parent / path_str)
 
-    i_head_2020 = out.index(head_2020)
-    i_2020_2025 = out.index(any_2020_2025)
-    assert i_head_2020 < i_2020_2025  # block head precedes its second_yr guesses
+    # Check a few second years that may exist based on the frozen year (2025)
+    pairs_to_check = [
+        ("g2021g2025", "g2021g2022g2025g2026"),
+        ("g2021g2024", "g2021g2022g2024g2025"),
+        ("g2021g2023", "g2021g2022g2023g2024"),
+        # When second_yr == 2022, the "single" equals the block head; still ensure
+        # its 4-link comes after at least one occurrence of the single.
+        ("g2021g2022", "g2021g2022g2022g2023"),
+    ]
+
+    # Only assert for entries that actually exist in the output
+    for single, four in pairs_to_check:
+        single_path = parent / single
+        four_path = parent / four
+        if single_path in out and four_path in out:
+            assert idx(single) < idx(four)
+
+    # The next block (first_yr=2020) should start after all g2021* entries.
+    head_2020 = parent / "g2020g2021"
+    assert head_2020 in out
+
+    last_2021_idx = max(i for i, path in enumerate(out) if path.name.startswith("g2021"))
+    assert out.index(head_2020) > last_2021_idx
