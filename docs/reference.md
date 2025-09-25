@@ -12,15 +12,24 @@ delete the .rst file afterwards.
 -->
 
 ```{eval-rst}
-ssb\_tbmd\_apis\_python package
-=============================================================================
+ssb\_tbmd\_apis package
+=======================
 
 
-ssb\_tbmd\_apis\_python.functions module
------------------------------------------------------------------------------
+ssb\_tbmd\_apis.tbmd\_logger module
+-----------------------------------
 
-.. automodule:: ssb_tbmd_apis_python.functions
+.. automodule:: ssb_tbmd_apis.tbmd_logger
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
+
+ssb\_tbmd\_apis.zeep\_client module
+-----------------------------------
+
+.. automodule:: ssb_tbmd_apis.zeep_client
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 ```
