@@ -212,14 +212,14 @@ reference = "nexus"
 
 [[package]]
 name = "anyio"
-version = "4.10.0"
+version = "4.11.0"
 description = "High-level concurrency and networking framework on top of asyncio or Trio"
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "anyio-4.10.0-py3-none-any.whl", hash = "sha256:60e474ac86736bbfd6f210f7a61218939c318f43f9972497381f1c5e930ed3d1"},
-    {file = "anyio-4.10.0.tar.gz", hash = "sha256:3f3fae35c96039744587aa5b8371e7e8e603c0702999535961dd336026973ba6"},
+    {file = "anyio-4.11.0-py3-none-any.whl", hash = "sha256:0287e96f4d26d4149305414d4e3bc32f0dcd0862365a4bddea19d7a1ec38c4fc"},
+    {file = "anyio-4.11.0.tar.gz", hash = "sha256:82a8d0b81e318cc5ce71a5f1f8b5c4e63619620b63141ef8c995fa0db95a57c4"},
 ]
 
 [package.dependencies]
@@ -229,7 +229,7 @@ sniffio = ">=1.1"
 typing_extensions = {version = ">=4.5", markers = "python_version < \"3.13\""}
 
 [package.extras]
-trio = ["trio (>=0.26.1)"]
+trio = ["trio (>=0.31.0)"]
 
 [package.source]
 type = "legacy"
@@ -1132,14 +1132,14 @@ reference = "nexus"
 
 [[package]]
 name = "dapla-toolbelt-metadata"
-version = "0.9.3"
+version = "0.9.4"
 description = "Dapla Toolbelt Metadata"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "dapla_toolbelt_metadata-0.9.3-py3-none-any.whl", hash = "sha256:f6fef4d44ac4c023e782fa048656e894190dfaa69c5bdb0270873dddbb90149d"},
-    {file = "dapla_toolbelt_metadata-0.9.3.tar.gz", hash = "sha256:23932ec4feaf9c845da3d56f701e5212770c487a72427f5be637e13aaf0b9e1b"},
+    {file = "dapla_toolbelt_metadata-0.9.4-py3-none-any.whl", hash = "sha256:46faf1707fabbd381da16d922da9985911ed0805a2309809c49f2a00234f3ed7"},
+    {file = "dapla_toolbelt_metadata-0.9.4.tar.gz", hash = "sha256:94afa81871abbfb1028386a366af575a6fe34ada8ba11f5b209c9df4d7fff9ed"},
 ]
 
 [package.dependencies]
@@ -6261,14 +6261,14 @@ reference = "nexus"
 
 [[package]]
 name = "uvicorn"
-version = "0.36.0"
+version = "0.37.0"
 description = "The lightning-fast ASGI server."
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "uvicorn-0.36.0-py3-none-any.whl", hash = "sha256:6bb4ba67f16024883af8adf13aba3a9919e415358604ce46780d3f9bdc36d731"},
-    {file = "uvicorn-0.36.0.tar.gz", hash = "sha256:527dc68d77819919d90a6b267be55f0e76704dca829d34aea9480be831a9b9d9"},
+    {file = "uvicorn-0.37.0-py3-none-any.whl", hash = "sha256:913b2b88672343739927ce381ff9e2ad62541f9f8289664fa1d1d3803fa2ce6c"},
+    {file = "uvicorn-0.37.0.tar.gz", hash = "sha256:4115c8add6d3fd536c8ee77f0e14a7fd2ebba939fed9b02583a97f80648f9e13"},
 ]
 
 [package.dependencies]

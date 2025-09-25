@@ -27,7 +27,7 @@
 
 # Tjenestebibliotek for metadata
 Is a 16-year old API built on top of Oracle in SSBs ON-prem environment for getting at metadata.\
-This package is written for extracting the information where possible. 
+This package is written for extracting the information where possible.
 
 ## Lenker onprem:
 http://ws.ssb.no/Default.aspx
