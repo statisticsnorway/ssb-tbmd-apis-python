@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import pytest
+from typeguard import TypeCheckError
 
 from ssb_tbmd_apis.oracle_direct import oracle_paths
 
@@ -108,17 +109,15 @@ def test_list_of_pairs_produces_union_all_and_combines_results(
 
 
 @pytest.mark.parametrize(
-    ("bad_input", "exc"),
+    "bad_input",
     [
-        (123, TypeError),  # not str/tuple/list
-        ([("ok", "ok"), ("bad", 1)], TypeError),  # inner element not str
-        (["not-a-tuple"], TypeError),  # list items not tuples
-        (("too", "many", "items"), TypeError),  # tuple arity != 2
+        123,  # not str/tuple/list
+        [("ok", "ok"), ("bad", 1)],  # inner element not str
+        ["not-a-tuple"],  # list items not tuples
+        ("too", "many", "items"),  # tuple arity != 2
     ],
 )
-def test_type_errors_for_bad_input(
-    bad_input, exc, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_type_errors_for_bad_input(bad_input, monkeypatch):
     _patch_oracle(monkeypatch, batches=[], queries_sink=[])
-    with pytest.raises(exc):
+    with pytest.raises((TypeError, TypeCheckError)):
         oracle_paths.paths_in_substamme(bad_input, database="DWH")  # type: ignore[arg-type]

@@ -3,7 +3,8 @@ from oracledb import Error as OraError
 
 
 def paths_in_substamme(
-    stamme_substamme: list[tuple[str, ...]] | tuple[str, ...] | str, database: str
+    stamme_substamme: list[tuple[str, str]] | tuple[str, str] | str,  # ← exact shapes
+    database: str,
 ) -> list[str]:
     """Try to recreate the paths used by Datadok under a stamme and substamme.
 
@@ -25,36 +26,40 @@ def paths_in_substamme(
         OraError: If the fetching from database doesnt work out.
 
     """
-    # Normalize to list[tuple[str, str]]
     if isinstance(stamme_substamme, str):
-        parts = stamme_substamme.lstrip("$").split("/")
+        parts = stamme_substamme.lstrip("$").split("/", 1)  # safer split
         if len(parts) != 2:
             raise TypeError(
                 "String form must be 'stamme/substamme' (optionally prefixed with '$')."
             )
-        stamme_substamme_pairs: list[tuple[str, str]] = [(parts[0], parts[1])]
+        pairs: list[tuple[str, str]] = [(parts[0], parts[1])]
     elif isinstance(stamme_substamme, tuple):
+        # With the strict annotation, Typeguard will already enforce len==2 and element types,
+        # but keep a runtime check for clarity and non-typeguard runs
         if len(stamme_substamme) != 2 or not all(
             isinstance(x, str) for x in stamme_substamme
         ):
             raise TypeError("Tuple form must be (stamme, substamme) of two strings.")
-        stamme_substamme_pairs = [
-            (stamme_substamme[0].lstrip("$"), stamme_substamme[1])
-        ]
-    else:
+        pairs = [(stamme_substamme[0].lstrip("$"), stamme_substamme[1])]
+    else:  # list[tuple[str, str]]
+        # LIST CASE — tighten runtime validation
         if not isinstance(stamme_substamme, list) or not all(
             isinstance(t, tuple) for t in stamme_substamme
         ):
             raise TypeError("List form must be list of (stamme, substamme) tuples.")
-        stamme_substamme_pairs = []
-        for t in stamme_substamme:
-            if len(t) != 2 or not all(isinstance(x, str) for x in t):
-                raise TypeError("Each tuple must be two strings: (stamme, substamme).")
-            stamme_substamme_pairs.append((t[0].lstrip("$"), t[1]))
+        if not all(len(t) == 2 for t in stamme_substamme):
+            raise TypeError(
+                "Each tuple must have exactly two elements: (stamme, substamme)."
+            )
+        if not all(
+            isinstance(t[0], str) and isinstance(t[1], str) for t in stamme_substamme
+        ):
+            raise TypeError("Each tuple must be two strings: (stamme, substamme).")
+        pairs = [(t[0].lstrip("$"), t[1]) for t in stamme_substamme]
 
     # Build queries with exactly one leading '$'
     union_queries: list[str] = []
-    for stamme, substamme in stamme_substamme_pairs:
+    for stamme, substamme in pairs:
         union_queries.append(
             f"""
             SELECT
