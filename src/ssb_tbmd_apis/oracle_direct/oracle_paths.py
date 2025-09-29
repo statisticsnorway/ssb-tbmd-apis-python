@@ -1,54 +1,59 @@
+from __future__ import annotations
+
+from collections.abc import Iterable
+
 from fagfunksjoner.prodsone.oradb import Oracle
 from oracledb import Error as OraError
 
+Pair = tuple[str, str]
 
-def paths_in_substamme(
-    stamme_substamme: list[tuple[str, ...]] | tuple[str, ...] | str, database: str
-) -> list[str]:
-    """Try to recreate the paths used by Datadok under a stamme and substamme.
 
-    Requires that you have a user in the correct database, and that it has the datadok-read-role.
-    The password for the database is also different from your usual password.
+def _normalize_stamme_input(stamme_substamme: list[Pair] | Pair | str) -> list[Pair]:
+    """Normalize the input into a list of (stamme, substamme) pairs.
 
-    Args:
-        stamme_substamme: A single, or multiple linux-stammes you want to find paths in.
-            Can be slash-seperated string, a tuple with two elements (stamme and substamme).
-            Or it can be a list of tuples, where the tuples contain two string (stamme and substamme),
-            allowing to get for many substammes at the same time (only enter database password once).
-        database: The name of the database containing the datadok-data, and lots of other data at Statistics Norway.
-
-    Returns:
-        list[str]: The paths constructed from the contents in the database.
+    Accepts:
+      - "$utd/nudb" or "utd/nudb" (string form; leading '$' allowed)
+      - ("utd", "nudb") (tuple form)
+      - [("utd", "nudb"), ("fob", "person")] (list of tuples)
 
     Raises:
-        TypeError: If the stamme_substamme parameter does not result in a list of tuples containing two strings.
-        OraError: If the fetching from database doesnt work out.
-
+      TypeError on malformed shapes or non-string elements.
     """
-    # Support different informats by wrapping simple types in iterators
     if isinstance(stamme_substamme, str):
-        stamme_substamme_pairs: list[tuple[str, ...]] = [
-            tuple(stamme_substamme.split("/"))
-        ]
-    elif isinstance(stamme_substamme, tuple):
-        stamme_substamme_pairs = [stamme_substamme]
-    else:
-        stamme_substamme_pairs = stamme_substamme
+        parts = stamme_substamme.lstrip("$").split("/", 1)
+        if len(parts) != 2:
+            raise TypeError(
+                "String form must be 'stamme/substamme' (optionally prefixed with '$')."
+            )
+        return [(parts[0], parts[1])]
 
-    # Typecheck
-    if not isinstance(stamme_substamme_pairs, list):
-        raise TypeError("stamme_substamme_pairs must be a list.")
-    if not all([isinstance(x, tuple) for x in stamme_substamme_pairs]):
-        raise TypeError("Elements of stamme_substamme_pairs must be tuples.")
-    if not all(isinstance(y, str) for x in stamme_substamme_pairs for y in x):
+    if isinstance(stamme_substamme, tuple):
+        if len(stamme_substamme) != 2 or not all(
+            isinstance(x, str) for x in stamme_substamme
+        ):
+            raise TypeError("Tuple form must be (stamme, substamme) of two strings.")
+        return [(stamme_substamme[0].lstrip("$"), stamme_substamme[1])]
+
+    # list of pairs
+    if not isinstance(stamme_substamme, list) or not all(
+        isinstance(t, tuple) for t in stamme_substamme
+    ):
+        raise TypeError("List form must be list of (stamme, substamme) tuples.")
+    if not all(len(t) == 2 for t in stamme_substamme):
         raise TypeError(
-            "All element of the tuples in the list stamme_substamme_pairs must be strings."
+            "Each tuple must have exactly two elements: (stamme, substamme)."
         )
+    if not all(
+        isinstance(t[0], str) and isinstance(t[1], str) for t in stamme_substamme
+    ):
+        raise TypeError("Each tuple must be two strings: (stamme, substamme).")
+    return [(t[0].lstrip("$"), t[1]) for t in stamme_substamme]
 
-    union_queries = []
-    for stamme, substamme in stamme_substamme_pairs:
-        union_queries.append(
-            f"""
+
+def _build_single_query(stamme: str, substamme: str) -> str:
+    """Build the SQL that yields full datadok paths for one (stamme, substamme)."""
+    # NOTE: Keep exact structure/spacing to preserve behavior and tests.
+    return f"""
             SELECT
                 '${stamme.upper()}/{substamme}/arkiv/' || f.filklasse_navn || '/' || g.filnavn AS full_path
             FROM (
@@ -82,22 +87,50 @@ def paths_in_substamme(
             ) g
             ON f.filklasse_id = g.filklasse_id
         """
-        )
 
-    # Combine the individual queries with UNION ALL
-    full_query = " UNION ALL ".join(union_queries)
 
-    results = []
+def _build_union_query(pairs: Iterable[Pair]) -> str:
+    """Combine per-pair queries with UNION ALL."""
+    return " UNION ALL ".join(
+        _build_single_query(stamme, substamme) for stamme, substamme in pairs
+    )
+
+
+def _execute_full_query(database: str, full_query: str) -> list[str]:
+    """Execute query and stream results in batches, returning flattened paths."""
+    results: list[str] = []
     try:
         with Oracle(db=database) as concur:
             concur.execute(full_query)
-            # gets all the data in batches
             while True:
                 rows = concur.fetchmany(1000)
                 if not rows:
                     break
-                else:
-                    results += [x[0] for x in rows]
+                results.extend(x[0] for x in rows)
     except OraError as error:
+        # Preserve original behavior: re-raise
         raise error
     return results
+
+
+def paths_in_substamme(
+    stamme_substamme: list[Pair] | Pair | str,
+    database: str,
+) -> list[str]:
+    """Try to recreate the paths used by Datadok under a stamme and substamme.
+
+    Accepts:
+      - "$stamme/substamme" or "stamme/substamme"
+      - (stamme, substamme)
+      - list of (stamme, substamme)
+
+    Returns:
+      list[str]: Full datadok paths (with a single leading '$').
+
+    Raises:
+      TypeError: On malformed input shapes or element types.
+      OraError:  If the database operations fail.
+    """
+    pairs = _normalize_stamme_input(stamme_substamme)
+    full_query = _build_union_query(pairs)
+    return _execute_full_query(database, full_query)

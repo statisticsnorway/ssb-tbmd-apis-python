@@ -15,6 +15,18 @@ delete the .rst file afterwards.
 ssb\_tbmd\_apis package
 =======================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ssb_tbmd_apis.exports
+   ssb_tbmd_apis.imports
+   ssb_tbmd_apis.operations
+   ssb_tbmd_apis.oracle_direct
+   ssb_tbmd_apis.paths
+
 
 ssb\_tbmd\_apis.tbmd\_logger module
 -----------------------------------
