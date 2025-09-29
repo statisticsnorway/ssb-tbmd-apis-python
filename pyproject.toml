@@ -1,6 +1,6 @@
 [project]
 name = "ssb-tbmd-apis-python"
-version = "0.0.0"
+version = "0.0.1"
 description = "SSB Tbmd Apis Python"
 authors = [{ name = "Carl F. Corneil", email = "cfc@ssb.no" }]
 license = "MIT"
