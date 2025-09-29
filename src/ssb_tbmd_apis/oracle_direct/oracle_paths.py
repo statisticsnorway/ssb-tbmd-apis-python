@@ -25,27 +25,27 @@ def paths_in_substamme(
         OraError: If the fetching from database doesnt work out.
 
     """
-    # Support different informats by wrapping simple types in iterators
+    # Normalize to list[tuple[str, str]]
     if isinstance(stamme_substamme, str):
-        stamme_substamme_pairs: list[tuple[str, ...]] = [
-            tuple(stamme_substamme.split("/"))
-        ]
+        parts = stamme_substamme.lstrip("$").split("/")
+        if len(parts) != 2:
+            raise TypeError("String form must be 'stamme/substamme' (optionally prefixed with '$').")
+        stamme_substamme_pairs: list[tuple[str, str]] = [(parts[0], parts[1])]
     elif isinstance(stamme_substamme, tuple):
-        stamme_substamme_pairs = [stamme_substamme]
+        if len(stamme_substamme) != 2 or not all(isinstance(x, str) for x in stamme_substamme):
+            raise TypeError("Tuple form must be (stamme, substamme) of two strings.")
+        stamme_substamme_pairs = [(stamme_substamme[0].lstrip("$"), stamme_substamme[1])]
     else:
-        stamme_substamme_pairs = stamme_substamme
+        if not isinstance(stamme_substamme, list) or not all(isinstance(t, tuple) for t in stamme_substamme):
+            raise TypeError("List form must be list of (stamme, substamme) tuples.")
+        stamme_substamme_pairs = []
+        for t in stamme_substamme:
+            if len(t) != 2 or not all(isinstance(x, str) for x in t):
+                raise TypeError("Each tuple must be two strings: (stamme, substamme).")
+            stamme_substamme_pairs.append((t[0].lstrip("$"), t[1]))
 
-    # Typecheck
-    if not isinstance(stamme_substamme_pairs, list):
-        raise TypeError("stamme_substamme_pairs must be a list.")
-    if not all([isinstance(x, tuple) for x in stamme_substamme_pairs]):
-        raise TypeError("Elements of stamme_substamme_pairs must be tuples.")
-    if not all(isinstance(y, str) for x in stamme_substamme_pairs for y in x):
-        raise TypeError(
-            "All element of the tuples in the list stamme_substamme_pairs must be strings."
-        )
-
-    union_queries = []
+    # Build queries with exactly one leading '$'
+    union_queries: list[str] = []
     for stamme, substamme in stamme_substamme_pairs:
         union_queries.append(
             f"""
