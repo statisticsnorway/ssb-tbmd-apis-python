@@ -29,14 +29,22 @@ def paths_in_substamme(
     if isinstance(stamme_substamme, str):
         parts = stamme_substamme.lstrip("$").split("/")
         if len(parts) != 2:
-            raise TypeError("String form must be 'stamme/substamme' (optionally prefixed with '$').")
+            raise TypeError(
+                "String form must be 'stamme/substamme' (optionally prefixed with '$')."
+            )
         stamme_substamme_pairs: list[tuple[str, str]] = [(parts[0], parts[1])]
     elif isinstance(stamme_substamme, tuple):
-        if len(stamme_substamme) != 2 or not all(isinstance(x, str) for x in stamme_substamme):
+        if len(stamme_substamme) != 2 or not all(
+            isinstance(x, str) for x in stamme_substamme
+        ):
             raise TypeError("Tuple form must be (stamme, substamme) of two strings.")
-        stamme_substamme_pairs = [(stamme_substamme[0].lstrip("$"), stamme_substamme[1])]
+        stamme_substamme_pairs = [
+            (stamme_substamme[0].lstrip("$"), stamme_substamme[1])
+        ]
     else:
-        if not isinstance(stamme_substamme, list) or not all(isinstance(t, tuple) for t in stamme_substamme):
+        if not isinstance(stamme_substamme, list) or not all(
+            isinstance(t, tuple) for t in stamme_substamme
+        ):
             raise TypeError("List form must be list of (stamme, substamme) tuples.")
         stamme_substamme_pairs = []
         for t in stamme_substamme:
