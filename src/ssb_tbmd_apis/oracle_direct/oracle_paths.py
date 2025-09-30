@@ -3,7 +3,6 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from fagfunksjoner.prodsone.oradb import Oracle
-from oracledb import Error as OraError
 
 Pair = tuple[str, str]
 
@@ -99,17 +98,13 @@ def _build_union_query(pairs: Iterable[Pair]) -> str:
 def _execute_full_query(database: str, full_query: str) -> list[str]:
     """Execute query and stream results in batches, returning flattened paths."""
     results: list[str] = []
-    try:
-        with Oracle(db=database) as concur:
-            concur.execute(full_query)
-            while True:
-                rows = concur.fetchmany(1000)
-                if not rows:
-                    break
-                results.extend(x[0] for x in rows)
-    except OraError as error:
-        # Preserve original behavior: re-raise
-        raise error
+    with Oracle(db=database) as concur:
+        concur.execute(full_query)
+        while True:
+            rows = concur.fetchmany(1000)
+            if not rows:
+                break
+            results.extend(x[0] for x in rows)
     return results
 
 

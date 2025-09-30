@@ -44,8 +44,7 @@ def datadok_open_flatfile_from_path(
         widths=var_df.T["Length"].to_list(),
         names=dtypes.keys(),
         na_values=".",
-        converters={k: str for k in dtypes.keys()},
-        **read_fwf_params,
+        converters=dict.fromkeys(dtypes, str) ** read_fwf_params,
     ).astype(dtypes)
     # Handle floats to convert
     for col in floats:
