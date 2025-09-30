@@ -68,7 +68,7 @@ from ssb_tbmd_apis.operations.operations_vardok import (
     vardok_concept_variables_by_name_def,
     vardok_concept_variables_by_owner
 )
- 
+
 len(vardok_concept_variables_by_owner("360"))
 
 print(vardok_concept_variables_by_owner("360"))
