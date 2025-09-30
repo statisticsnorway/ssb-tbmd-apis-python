@@ -26,16 +26,13 @@
 
 
 # Tjenestebibliotek for metadata
-Is a 16-year old API built on top of Oracle in SSBs ON-prem environment for getting at metadata.\
+Is an API built on top of Oracle in SSBs ON-prem environment for getting at metadata.\
 This package is written for extracting the information where possible.
 
-## Lenker onprem:
-http://ws.ssb.no/Default.aspx
-http://trac.ssb.no/tbmd
+## Lenker ssb onprem:
+- http://ws.ssb.no/Default.aspx
+- http://trac.ssb.no/tbmd
 
-## Features
-
-### TODO
 
 ## Installation
 
@@ -45,14 +42,44 @@ You can install _SSB Tbmd Apis Python_ via [pip] from [PyPI]:
 poetry add ssb-tbmd-apis-python
 ```
 
-## Usage
+## Usage examples
 
-Please see the [Reference Guide] for details.
+Open a flatfile as a pandas dataframe with only the path to the datafile.
+```python
+from ssb_tbmd_apis.imports.datadok_open_flatfile import datadok_open_flatfile_from_path
 
-## Contributing
+df = datadok_open_flatfile_from_path(
+    "/ssb/stam/utdanning/vgogjen/mappe/g2023"
+)
+```
 
-Contributions are very welcome.
-To learn more, see the [Contributor Guide].
+Store a json of the "filbeskrivelse" - the metadata to interpret a "fixed-width-file" / "flatfile".
+This stores the json next to the datafile, with the suffix "__MIGRERDOK.json"
+```python
+from ssb_tbmd_apis.exports.migrerdok import save_migrerdok_for_flatfile
+migrer_path = save_migrerdok_for_flatfile(
+    "$DOLLAR/team/archive/folder/g2001", overwrite=True
+)
+```
+
+Get metadata from the old "vardok".
+```python
+from ssb_tbmd_apis.operations.operations_vardok import (
+    vardok_concept_variables_by_name_def,
+    vardok_concept_variables_by_owner
+)
+ 
+len(vardok_concept_variables_by_owner("360"))
+
+print(vardok_concept_variables_by_owner("360"))
+
+print(vardok_concept_variables_by_name_def("nus2000"))
+```
+
+
+
+Please see the [Reference Guide] for further details.
+
 
 ## License
 
