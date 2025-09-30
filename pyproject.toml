@@ -10,7 +10,7 @@ dynamic = ["classifiers"]
 
 
 [tool.poetry]
-classifiers = ["Development Status :: 1 - Planning"]
+classifiers = ["Development Status :: 4 - Beta",]
 requires-poetry = ">=2.0"
 packages = [{include = "ssb_tbmd_apis", from = "src"}]
 

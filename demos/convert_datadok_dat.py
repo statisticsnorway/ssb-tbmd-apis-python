@@ -17,9 +17,7 @@
 from ssb_tbmd_apis.imports.datadok_open_flatfile import datadok_open_flatfile_from_path
 
 # %%
-df = datadok_open_flatfile_from_path(
-    "/ssb/stamme01/utd_pii/gjfor_vgo/arkiv/5s6y/g2017g2023"
-)
+df = datadok_open_flatfile_from_path("/ssb/stam/utdanning/vgogjen/mappe/g2023")
 
 # %%
 df["grunnskolepoeng"]
