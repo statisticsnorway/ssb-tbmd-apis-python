@@ -1,11 +1,11 @@
 [project]
 name = "ssb-tbmd-apis-python"
-version = "0.0.1"
+version = "0.0.2"
 description = "SSB Tbmd Apis Python"
 authors = [{ name = "Carl F. Corneil", email = "cfc@ssb.no" }]
 license = "MIT"
 readme = "README.md"
-requires-python = ">=3.10,<4.0"
+requires-python = ">=3.10"
 dynamic = ["classifiers"]
 
 
@@ -20,7 +20,7 @@ repository = "https://github.com/statisticsnorway/ssb-tbmd-apis-python"
 documentation = "https://statisticsnorway.github.io/ssb-tbmd-apis-python"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<4.0"
+python = ">=3.10"
 ipykernel = ">=6.29.5"
 zeep = ">=4.3.1"
 lxml = ">=5.3.0"
