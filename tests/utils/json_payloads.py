@@ -33,6 +33,12 @@ def load_ordered_json(path: str | Path) -> OrderedDict[str, Any]:
 def ref_to_name(ref: str) -> str:
     """Turn a Datadok reference into a safe filename stem.
 
+    Args:
+        ref: Datadok reference string.
+
+    Returns:
+        Safe filename stem.
+
     Examples:
         "$FOB/person/arkiv/personfil/g2001/spes_reg_type"
         -> "FOB__person__arkiv__personfil__g2001__spes_reg_type"

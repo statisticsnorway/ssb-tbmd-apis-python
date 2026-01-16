@@ -10,13 +10,19 @@ Pair = tuple[str, str]
 def _normalize_stamme_input(stamme_substamme: list[Pair] | Pair | str) -> list[Pair]:
     """Normalize the input into a list of (stamme, substamme) pairs.
 
+    Args:
+        stamme_substamme: Stamme/substamme input in string, tuple, or list form.
+
     Accepts:
       - "$utd/nudb" or "utd/nudb" (string form; leading '$' allowed)
       - ("utd", "nudb") (tuple form)
       - [("utd", "nudb"), ("fob", "person")] (list of tuples)
 
+    Returns:
+        List of (stamme, substamme) pairs with any leading '$' removed.
+
     Raises:
-      TypeError on malformed shapes or non-string elements.
+        TypeError: On malformed shapes or non-string elements.
     """
     if isinstance(stamme_substamme, str):
         parts = stamme_substamme.lstrip("$").split("/", 1)
@@ -114,6 +120,10 @@ def paths_in_substamme(
 ) -> list[str]:
     """Try to recreate the paths used by Datadok under a stamme and substamme.
 
+    Args:
+        stamme_substamme: Stamme/substamme input in string, tuple, or list form.
+        database: Database name or DSN for the Oracle connection.
+
     Accepts:
       - "$stamme/substamme" or "stamme/substamme"
       - (stamme, substamme)
@@ -121,10 +131,6 @@ def paths_in_substamme(
 
     Returns:
       list[str]: Full datadok paths (with a single leading '$').
-
-    Raises:
-      TypeError: On malformed input shapes or element types.
-      OraError:  If the database operations fail.
     """
     pairs = _normalize_stamme_input(stamme_substamme)
     full_query = _build_union_query(pairs)
