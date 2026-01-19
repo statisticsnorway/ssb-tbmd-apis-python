@@ -17,7 +17,7 @@ def datadok_open_flatfile_from_path(
     Args:
         path: Path to the flat file.
         ddok_path: Path to the Datadok file (optional).
-        read_fwf_params: Additional parameters for reading the flat file.
+        **read_fwf_params: Additional parameters for reading the flat file.
 
     Returns:
         pd.DataFrame: DataFrame containing the data from the flat file.

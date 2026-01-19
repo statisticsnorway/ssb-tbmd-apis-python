@@ -20,7 +20,7 @@ class LocalResolverTransport(zeep.transports.Transport):
         """Load XSD files from local directory instead of fetching them from the internet.
 
         Args:
-            url (str): The URL of the XSD file to load.
+            url: The URL of the XSD file to load.
 
         Returns:
             bytes: The content of the XSD file.
@@ -92,7 +92,7 @@ class ZeepClientManager:
         """Initialize the ZeepClientManager with the provided WSDL URL.
 
         Args:
-            wsdl (str): The WSDL URL for the Zeep client.
+            wsdl: The WSDL URL for the Zeep client.
         """
         self.wsdl = wsdl
         self.session: None | requests.Session = None
@@ -151,8 +151,8 @@ def get_zeep_serialize(
     """Get serialized response from the Zeep client for the specified operation.
 
     Args:
-        tbmd_service (str): The TBMD service to use (default is "datadok").
-        operation (str): The operation to perform (default is "GetFileDescriptionByPath").
+        tbmd_service: The TBMD service to use (default is "datadok").
+        operation: The operation to perform (default is "GetFileDescriptionByPath").
         *args: Arguments for the operation.
 
     Returns:
@@ -174,8 +174,8 @@ def get_zeep_serialize_list(
     """Get serialized response from the Zeep client for the specified operation that returns a list.
 
     Args:
-        tbmd_service (str): The TBMD service to use (default is "datadok").
-        operation (str): The operation to perform (default is "GetFileDescriptionByPath").
+        tbmd_service: The TBMD service to use (default is "datadok").
+        operation: The operation to perform (default is "GetFileDescriptionByPath").
         *args: Arguments for the operation.
 
     Returns:

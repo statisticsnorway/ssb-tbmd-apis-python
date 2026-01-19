@@ -34,7 +34,7 @@ def linux_stammer(
         ValueError: If the stamme_variabel file is wrongly formatted.
     """
     stm: dict[str, Path] = {}
-    with open("/etc/profile.d/stamme_variabel") as stam_var:
+    with open("/etc/profile.d/stamme_variabel", encoding="latin1") as stam_var:
         for line in stam_var:
             line = line.strip()
             if line.startswith("export") and "=" in line:
